@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity(name = "accounts")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,9 +26,9 @@ public class Account {
     private String alias;
 
     @Column(name = "amount", nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
-    //TODO
-    private String owner;
+
+    //private User owner;
 
 }

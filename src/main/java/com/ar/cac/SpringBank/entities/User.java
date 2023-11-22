@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Entity(name = "usuarios")
+@Entity(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -19,11 +19,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "accountType", nullable = false)
+    @Column(name = "account_type", nullable = false)
     private AccountType type;
 
+    @Column(name = "cbu", nullable = false,unique = true)
     private String cbu;
 
+    @Column(name = "alias", nullable = false,unique = true)
     private String alias;
 
     @Column(name = "amount", nullable = false)

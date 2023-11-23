@@ -1,5 +1,6 @@
 package com.ar.cac.SpringBank.entities;
 
+import com.ar.cac.SpringBank.entities.enums.AccountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class Account {
     private Long id;
 
     @Column(name = "accountType", nullable = false)
-    private AccessType type;
+    private AccountType type;
 
     private String cbu;
 

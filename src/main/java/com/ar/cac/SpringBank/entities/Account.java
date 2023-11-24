@@ -25,7 +25,7 @@ public class Account {
     @Column(name = "cbu",nullable = false, unique = true)
     private String cbu;
 
-    @Column(name = "cbu",nullable = false, unique = true)
+    @Column(name = "alias",nullable = false, unique = true)
     private String alias;
 
     @Column(name = "amount", nullable = false)

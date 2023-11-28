@@ -30,5 +30,16 @@ public class UserMapper {
         dto.setAddress(user.getAddress());
         dto.setBirthDate(user.getBirthDate());
         return dto;
+
+        // TODO: Esa es otra forma de hacerlo, tienes el constructor con todos los parametros.
+        /* return new UserDto(user.getId(),
+                user.getLastName(),
+                user.getFirstName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getDocument(),
+                user.getBirthDate(),
+                user.getAddress());
+         */
     }
 }

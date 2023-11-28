@@ -1,2 +1,3 @@
-package com.ar.cac.SpringBank.entities.dtos;public class TransferDto {
+package com.ar.cac.SpringBank.entities.dtos;
+public class TransferDto {
 }

@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Entity(name = "users")
+@Entity(name = "usuarios")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter   //le agregue el setter porque me pide el set el mapper
+@Setter
 public class User {
 
     @Id
@@ -40,5 +41,6 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    //private List<Account> accounts;
+    @OneToMany (mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Account> accounts;
 }

@@ -1,2 +1,3 @@
-package com.ar.cac.SpringBank.mappers;public class TransferMapper {
+package com.ar.cac.SpringBank.mappers;
+public class TransferMapper {
 }

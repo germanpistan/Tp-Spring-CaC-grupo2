@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-@Entity(name = "accounts")
+@Entity(name = "cuentas")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -32,6 +33,10 @@ public class Account {
     private BigDecimal amount;
 
 
-    //private User owner;
+    @ManyToOne
+    private User owner;
+
+    @OneToMany
+    private List <Transfer> transfer;
 
 }

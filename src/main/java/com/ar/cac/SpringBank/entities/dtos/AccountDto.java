@@ -1,7 +1,6 @@
 package com.ar.cac.SpringBank.entities.dtos;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

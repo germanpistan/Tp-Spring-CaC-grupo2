@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "cuentas")
@@ -31,6 +32,10 @@ public class Account {
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
+
+    private LocalDateTime created_at;
+
+    private LocalDateTime updated_at;
 
 
     @ManyToOne

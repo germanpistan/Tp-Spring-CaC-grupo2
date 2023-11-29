@@ -23,9 +23,6 @@ public class Transfer {
     private BigDecimal amount;
 
 
-
-
-
     //falta refactor aca en la relacion entre el creador de las cuentas y las transferencias.
     @ManyToOne
     private Account creator;

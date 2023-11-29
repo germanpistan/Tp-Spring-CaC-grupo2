@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "cuentas")
@@ -29,6 +30,12 @@ public class Account {
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     private User owner;

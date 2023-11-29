@@ -1,8 +1,10 @@
 package com.ar.cac.SpringBank.entities.dtos;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
-import jakarta.persistence.Column;
+
+
 import lombok.*;
+
 
 import java.math.BigDecimal;
 

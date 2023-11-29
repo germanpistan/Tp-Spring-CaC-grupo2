@@ -2,10 +2,7 @@ package com.ar.cac.SpringBank.entities.dtos;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
 import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -13,6 +10,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class AccountDto {
 
     private Long id;
@@ -24,5 +22,4 @@ public class AccountDto {
     private String alias;
 
     private BigDecimal amount;
-
 }

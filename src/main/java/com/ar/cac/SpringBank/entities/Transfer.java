@@ -1,15 +1,25 @@
 package com.ar.cac.SpringBank.entities;
 
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
-
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Transfer {
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column (name = "transfer_id")
     private Long id;
     private Long origin;
-    //falta target
-    private Date date;
+    private Long target;
+    private LocalDate date;
     private BigDecimal amount;
 
 

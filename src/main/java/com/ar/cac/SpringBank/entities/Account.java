@@ -2,10 +2,7 @@ package com.ar.cac.SpringBank.entities;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +30,9 @@ public class Account {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-
     @ManyToOne
     private User owner;
 
     @OneToMany
     private List <Transfer> transfer;
-
 }

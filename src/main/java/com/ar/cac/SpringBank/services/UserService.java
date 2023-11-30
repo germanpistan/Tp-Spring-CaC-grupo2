@@ -2,6 +2,7 @@ package com.ar.cac.SpringBank.services;
 import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
+import com.ar.cac.SpringBank.Exceptions.enums.UserFinal;
 import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserService {
             User userSaved = repository.save(UserMapper.dtoToUser(userDto));
             return UserMapper.userToDto(userSaved);
         } else{
-            throw new UserNotExistsException("Usuario con mail: " + userDto.getEmail() + " ya existe");
+            throw new UserNotExistsException(UserFinal.USUARIO_ORIGEN);
         }
 
     }
@@ -47,7 +48,7 @@ public class UserService {
             repository.deleteById(id);
             return "El usuario con id: " + id + " ha sido eliminado";
         } else {
-            throw new UserNotExistsException("El usuario a eliminar elegido no existe");
+            throw new UserNotExistsException(UserFinal.USUARIO_DESTINO);
         }
 
     }

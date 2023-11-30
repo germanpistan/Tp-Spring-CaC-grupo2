@@ -16,7 +16,11 @@ public class TransferMapper {
 
     }
 
-    public static TransferDto transferDto(Transfer transfer) {
+
+
+
+    public static TransferDto transferToDto(Transfer transfer) {
+
         return TransferDto.builder()
                 .id(transfer.getId())
                 .amount(transfer.getAmount())

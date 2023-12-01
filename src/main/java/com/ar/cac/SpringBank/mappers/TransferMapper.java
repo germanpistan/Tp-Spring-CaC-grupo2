@@ -1,11 +1,10 @@
 package com.ar.cac.SpringBank.mappers;
 
 import com.ar.cac.SpringBank.entities.Transfer;
-
 import com.ar.cac.SpringBank.entities.dtos.TransferDto;
 
 public class TransferMapper {
-    public Transfer dtoToTransfer(TransferDto dto) {
+    public static Transfer dtoToTransfer(TransferDto dto) {
         return Transfer.builder()
                 .id(dto.getId())
                 .amount(dto.getAmount())

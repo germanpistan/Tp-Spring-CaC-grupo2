@@ -1,40 +1,41 @@
 package com.ar.cac.SpringBank.services;
+
+import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
 import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
-import com.ar.cac.SpringBank.Exceptions.enums.UserFinal;
 import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
-
-    public List<UserDto> getUsers(){
-        List<User> users = repository.findAll();
-        List<UserDto> usersDtos = users.stream()
-                .map(UserMapper::userToDto)
-                .collect(Collectors.toList());
-        return usersDtos;
+    public UserService(UserRepository repository) {
+        this.repository = repository;
     }
 
-    public UserDto createUser(UserDto userDto) throws UserNotExistsException {
-        User userValidated = validateUserByEmail(userDto);
-        if (userValidated == null){
-            User userSaved = repository.save(UserMapper.dtoToUser(userDto));
-            return UserMapper.userToDto(userSaved);
-        } else{
-            throw new UserNotExistsException(UserFinal.USUARIO_ORIGEN);
-        }
+    public List<UserDto> getUsers() {
 
+        /*List<User> users = repository.findAll();
+        List<UserDto> usersDtos = users.stream()
+                .map(UserMapper::userToDto)
+                .collect(Collectors.toList());*/
+        return repository.findAll().stream().map(UserMapper::userToDto).toList();
+    }
+
+    public UserDto createUser(UserDto userDto) throws DuplicateEmailException {
+
+        checkExistEmail(userDto);
+
+        User userSaved = repository.save(UserMapper.dtoToUser(userDto));
+
+        return UserMapper.userToDto(userSaved);
     }
 
 
@@ -44,42 +45,42 @@ public class UserService {
     }
 
     public String deleteUser(Long id) throws UserNotExistsException {
-        if (repository.existsById(id)){
+        if (repository.existsById(id)) {
             repository.deleteById(id);
             return "El usuario con id: " + id + " ha sido eliminado";
         } else {
-            throw new UserNotExistsException(UserFinal.USUARIO_DESTINO);
+            throw new UserNotExistsException();
         }
 
     }
 
     public UserDto updateUser(Long id, UserDto dto) {
-        if (repository.existsById(id)){
+        if (repository.existsById(id)) {
             User userToModify = repository.findById(id).get();
 
-            if (dto.getFirstName() != null){
+            if (dto.getFirstName() != null) {
                 userToModify.setFirstName(dto.getFirstName());
             }
 
-            if (dto.getLastName() != null){
+            if (dto.getLastName() != null) {
                 userToModify.setLastName(dto.getLastName());
             }
 
-            if (dto.getEmail() != null){
+            if (dto.getEmail() != null) {
                 userToModify.setEmail(dto.getEmail());
             }
 
-            if (dto.getPassword() != null){
+            if (dto.getPassword() != null) {
                 userToModify.setPassword(dto.getPassword());
             }
 
-            if (dto.getDocument() != null){
+            if (dto.getDocument() != null) {
                 userToModify.setDocument(dto.getDocument());
             }
-            if (dto.getAddress() != null){
+            if (dto.getAddress() != null) {
                 userToModify.setAddress(dto.getAddress());
             }
-            if (dto.getBirthDate() != null){
+            if (dto.getBirthDate() != null) {
                 userToModify.setBirthDate(dto.getBirthDate());
             }
 
@@ -91,7 +92,17 @@ public class UserService {
         return null;
     }
 
-    public User validateUserByEmail(UserDto dto){
-        return repository.findByEmail(dto.getEmail());
+    protected void checkExistUser(Long id) throws UserNotExistsException {
+
+        var result = repository.existsById(id);
+        if (result) throw new UserNotExistsException();
     }
+
+    protected void checkExistEmail(UserDto dto) throws DuplicateEmailException {
+
+        var result = repository.existsByEmail(dto.getEmail());
+
+        if (result) throw new DuplicateEmailException();
+    }
+
 }

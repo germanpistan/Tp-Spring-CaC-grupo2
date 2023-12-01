@@ -1,11 +1,12 @@
 package com.ar.cac.SpringBank.mappers;
+
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserMapper {
-    public User dtoToUser (UserDto dto) {
+    public User dtoToUser(UserDto dto) {
         return User.builder()
                 .lastName(dto.getLastName())
                 .firstName(dto.getFirstName())
@@ -18,7 +19,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserDto userToDto (User user) {
+    public static UserDto userToDto(User user) {
         return UserDto.builder()
                 .lastName(user.getLastName())
                 .firstName(user.getFirstName())

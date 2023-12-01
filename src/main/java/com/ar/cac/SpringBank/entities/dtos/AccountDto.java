@@ -1,10 +1,7 @@
 package com.ar.cac.SpringBank.entities.dtos;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
-
-
 import lombok.*;
-
 
 import java.math.BigDecimal;
 

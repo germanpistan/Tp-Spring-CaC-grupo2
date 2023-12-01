@@ -1,4 +1,5 @@
 package com.ar.cac.SpringBank.entities;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +39,6 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    @OneToMany (mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts;
 }

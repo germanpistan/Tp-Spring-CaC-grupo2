@@ -20,5 +20,7 @@ public class AccountDto {
 
     private String alias;
 
-    private BigDecimal amount;
+    private BigDecimal amount = BigDecimal.ZERO;
+
+    private Long ownerId;
 }

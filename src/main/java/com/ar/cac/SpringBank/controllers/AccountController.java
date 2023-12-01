@@ -2,6 +2,7 @@ package com.ar.cac.SpringBank.controllers;
 
 
 import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
+import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import com.ar.cac.SpringBank.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,13 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<?> createAccount(@RequestBody AccountDto account) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createAccount(account));
+        try {
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.createAccount(account));
+        } catch (UserNotFoundException e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{id}")

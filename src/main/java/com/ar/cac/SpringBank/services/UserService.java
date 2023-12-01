@@ -1,7 +1,7 @@
 package com.ar.cac.SpringBank.services;
 
 import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
-import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
+import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import com.ar.cac.SpringBank.mappers.UserMapper;
@@ -17,6 +17,7 @@ public class UserService {
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
+
         this.repository = repository;
     }
 
@@ -33,28 +34,44 @@ public class UserService {
 
         checkExistEmail(userDto);
 
+        // TODO: Falta aplicar excepciones de validación
+
         User userSaved = repository.save(UserMapper.dtoToUser(userDto));
 
         return UserMapper.userToDto(userSaved);
     }
 
 
-    public UserDto getUserById(Long id) {
-        User entity = repository.findById(id).get();
-        return UserMapper.userToDto(entity);
+    public UserDto getUserById(Long id) throws UserNotFoundException {
+
+        // Refactor
+        /*User entity = repository.findById(id).get();
+        return UserMapper.userToDto(entity);*/
+
+        return repository.findById(id)
+                .map(UserMapper::userToDto)
+                .orElseThrow(UserNotFoundException::new);
     }
 
-    public String deleteUser(Long id) throws UserNotExistsException {
-        if (repository.existsById(id)) {
+    // Se modifica a void
+    public void deleteUser(Long id) throws UserNotFoundException {
+
+        // Refactor
+        /*if (repository.existsById(id)) {
             repository.deleteById(id);
             return "El usuario con id: " + id + " ha sido eliminado";
         } else {
-            throw new UserNotExistsException();
-        }
+            throw new UserNotFoundException();
+        }*/
 
+        checkExistUser(id);
+        repository.deleteById(id);
     }
 
     public UserDto updateUser(Long id, UserDto dto) {
+
+        // TODO: Falta implementar excepciones de validación.
+
         if (repository.existsById(id)) {
             User userToModify = repository.findById(id).get();
 
@@ -92,17 +109,15 @@ public class UserService {
         return null;
     }
 
-    protected void checkExistUser(Long id) throws UserNotExistsException {
+    protected void checkExistUser(Long id) throws UserNotFoundException {
 
         var result = repository.existsById(id);
-        if (result) throw new UserNotExistsException();
+        if (result) throw new UserNotFoundException();
     }
 
     protected void checkExistEmail(UserDto dto) throws DuplicateEmailException {
 
         var result = repository.existsByEmail(dto.getEmail());
-
         if (result) throw new DuplicateEmailException();
     }
-
 }

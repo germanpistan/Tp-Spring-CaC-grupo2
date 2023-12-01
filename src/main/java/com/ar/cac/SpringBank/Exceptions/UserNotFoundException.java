@@ -1,6 +1,6 @@
 package com.ar.cac.SpringBank.Exceptions;
 
-public class UserNotExistsException extends Exception {
+public class UserNotFoundException extends Exception {
     /*public UserNotExistsException(UserFinal userDestination) {
         switch (userDestination) {
             case USUARIO_ORIGEN -> super("El usuario de origen no existe");
@@ -11,7 +11,7 @@ public class UserNotExistsException extends Exception {
         }
     }*/
 
-    public UserNotExistsException() {
-        super("El usuario no existe");
+    public UserNotFoundException() {
+        super("Usuario no encontrado.");
     }
 }

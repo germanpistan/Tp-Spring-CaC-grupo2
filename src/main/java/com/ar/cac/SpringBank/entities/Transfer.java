@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class Transfer {
     private Long id;
     private Long origin;
     private Long target;
-    private LocalDate date;
+    private Date date;
     private BigDecimal amount;
 
 

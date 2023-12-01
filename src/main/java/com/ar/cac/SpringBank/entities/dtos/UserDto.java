@@ -1,4 +1,5 @@
 package com.ar.cac.SpringBank.entities.dtos;
+
 import lombok.*;
 
 import java.time.LocalDate;

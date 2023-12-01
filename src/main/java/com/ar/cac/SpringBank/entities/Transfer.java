@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @Builder
 public class Transfer {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column (name = "transfer_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transfer_id")
     private Long id;
     private Long origin;
     private Long target;

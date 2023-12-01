@@ -3,9 +3,11 @@ package com.ar.cac.SpringBank.services;
 
 import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
 import com.ar.cac.SpringBank.Exceptions.InsufficientFoundsException;
+import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import com.ar.cac.SpringBank.mappers.AccountMapper;
+import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,19 @@ public class AccountService {
     }
 
     public List<AccountDto> getAccounts() {
+
         return repository.findAll().stream()
                 .map(AccountMapper::accountToDto)
-                .collect(Collectors.toList());
-
+                .toList();
     }
 
-    public AccountDto getAccountById(Long id) {
+    public AccountDto getAccountById(Long id) throws AccountNotFoundException {
 
-        Account acc = repository.findById(id).get();
-        return AccountMapper.accountToDto(acc);
+        /*Account acc = repository.findById(id).get();
+        return AccountMapper.accountToDto(acc);*/
+        // Refactor
 
+        return repository.findById(id).map(AccountMapper::accountToDto).orElseThrow(AccountNotFoundException::new);
     }
 
     public AccountDto createAccount(AccountDto dto) {

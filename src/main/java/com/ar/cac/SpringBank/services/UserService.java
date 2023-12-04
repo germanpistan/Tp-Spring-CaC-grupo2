@@ -32,7 +32,7 @@ public class UserService {
         checkExistEmail(userDto.getEmail());
         checkExistDocument(userDto.getDocument());
 
-        // TODO: Falta aplicar excepciones de validación
+
 
         User userSaved = repository.save(UserMapper.dtoToUser(userDto));
 
@@ -47,7 +47,7 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    // Se modifica a void
+
     public void deleteUser(Long id) throws UserNotFoundException {
 
         checkExistUser(id);

@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,14 +49,12 @@ public class TransferService {
     }
 
 
-
-
     public TransferDto createTransfer(TransferDto dto) throws AccountNotFoundException, InsufficientFoundsException {
 
 
-        accountService.checkExistAccount(dto.getOrigin());
-        accountService.checkAmount(dto.getOrigin(), dto.getAmount());
-        accountService.checkExistAccount(dto.getTarget());
+        accountService.checkExistAccount(dto.getSourceAccountId());
+        accountService.checkAmount(dto.getSourceAccountId(), dto.getAmount());
+        accountService.checkExistAccount(dto.getTargetAccountId());
 
         var entity = repository.save(TransferMapper.dtoToTransfer(dto));
 
@@ -69,14 +65,14 @@ public class TransferService {
     @Transactional
     public TransferDto performTransfer(TransferDto dto) throws AccountNotFoundException, InsufficientFoundsException {
         // Comprobar si las cuentas de origen y destino existen
-        Account originAccount = accountRepository.findById(dto.getOrigin())
-                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getOrigin()));
-        Account destinationAccount = accountRepository.findById(dto.getTarget())
-                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getTarget()));
+        Account originAccount = accountRepository.findById(dto.getSourceAccountId())
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getSourceAccountId()));
+        Account destinationAccount = accountRepository.findById(dto.getTargetAccountId())
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getTargetAccountId()));
 
         // Comprobar si la cuenta de origen tiene fondos suficientes
         if (originAccount.getAmount().compareTo(dto.getAmount()) < 0) {
-            throw new InsufficientFoundsException("Insufficient funds in the account with id: " + dto.getOrigin());
+            throw new InsufficientFoundsException("Insufficient funds in the account with id: " + dto.getSourceAccountId());
         }
 
         // Realizar la transferencia
@@ -90,11 +86,11 @@ public class TransferService {
         // Crear la transferencia y guardarla en la base de datos
         Transfer transfer = new Transfer();
         // Creamos un objeto del tipo Date para obtener la fecha actual
-        Date date = new Date();
+        //LocalDateTime date = LocalDateTime.now(); Ya no es necesario, se crea automáticamente
         // Seteamos el objeto fecha actual en el transferDto
-        transfer.setDate(date);
-        transfer.setOrigin(originAccount.getId());
-        transfer.setTarget(destinationAccount.getId());
+        //transfer.setDate(date);
+        transfer.setSourceAccountId(originAccount.getId());
+        transfer.setTargetAccountId(destinationAccount.getId());
         transfer.setAmount(dto.getAmount());
         transfer = repository.save(transfer);
 

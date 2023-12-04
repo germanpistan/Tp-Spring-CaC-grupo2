@@ -1,6 +1,7 @@
 package com.ar.cac.SpringBank.controllers;
 
 
+import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
 import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
 import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
@@ -60,7 +61,7 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(service.createUser(user));
-        } catch (DuplicateEmailException e) {
+        } catch (DuplicateEmailException | DuplicateDocumentException e) {
 
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -73,9 +74,25 @@ public class UserController {
 
         // TODO: Faltan validaciones
 
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+        try {
+
+            service.updateUser(id, user);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (DuplicateEmailException | DuplicateDocumentException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (UserNotFoundException e2) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e2.getMessage());
+        }
+
     }
 
     @DeleteMapping(value = "/{id}")

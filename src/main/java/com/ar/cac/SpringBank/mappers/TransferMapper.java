@@ -16,8 +16,6 @@ public class TransferMapper {
     }
 
 
-
-
     public static TransferDto transferToDto(Transfer transfer) {
 
         return TransferDto.builder()

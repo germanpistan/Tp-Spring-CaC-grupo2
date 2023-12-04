@@ -39,9 +39,5 @@ public class TransferService {
         return TransferMapper.transferToDto(transfer);
    }
 
-   public TransferDto createTransfer(TransferDto dto){
-
-
-   }
 
 }

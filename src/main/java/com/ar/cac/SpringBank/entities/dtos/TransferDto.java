@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,6 +16,6 @@ public class TransferDto {
     private Long id;
     private Long origin;
     private Long target;
-    private LocalDate date;
+    private Date date;
     private BigDecimal amount;
 }

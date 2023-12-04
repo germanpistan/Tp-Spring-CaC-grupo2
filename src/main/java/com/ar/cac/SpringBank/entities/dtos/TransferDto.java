@@ -3,7 +3,6 @@ package com.ar.cac.SpringBank.entities.dtos;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -13,8 +12,8 @@ import java.time.LocalDate;
 public class TransferDto {
 
     private Long id;
-    private Long origin;
-    private Long target;
-    private LocalDate date;
+    private Long sourceAccountId;
+    private Long targetAccountId;
+    //private LocalDateTime date; Ya no lo requiere, se genera automáticamente
     private BigDecimal amount;
 }

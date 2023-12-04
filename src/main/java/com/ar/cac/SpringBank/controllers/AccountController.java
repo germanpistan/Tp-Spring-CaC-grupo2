@@ -1,8 +1,10 @@
 package com.ar.cac.SpringBank.controllers;
 
 
+import com.ar.cac.SpringBank.Exceptions.*;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import com.ar.cac.SpringBank.services.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,40 +12,96 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/accounts")
 public class AccountController {
 
+    @Autowired
     private final AccountService service;
 
-    private AccountController(AccountService service){
-        this.service= service;
+    private AccountController(AccountService service) {
+        this.service = service;
     }
 
     @GetMapping
     public ResponseEntity<List<AccountDto>> getAccounts() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getAccounts());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.getAccounts());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AccountDto> getAccountById (@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.getAccountById(id));
+    public ResponseEntity<?> getAccountById(@PathVariable Long id) {
+
+        try {
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(service.getAccountById(id));
+        } catch (AccountNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
     @PostMapping
-    public ResponseEntity<AccountDto> createAccount (@RequestBody AccountDto account){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createAccount(account));
+    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) {
 
+        try {
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(service.createAccount(account));
+
+        } catch (UserNotFoundException | DuplicateCbuException | DuplicateAliasException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AccountDto> updateAccount (@PathVariable Long id,@RequestBody AccountDto account){
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateAccount(id, account));
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, DuplicateCbuException, DuplicateAliasException {
+
+        try {
+
+            service.updateAccount (id, account);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (DuplicateCbuException | DuplicateAliasException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (AccountNotFoundException e1) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e1.getMessage());
+        }
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteAccount (@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.deleteAccount(id));
+    public ResponseEntity<?> deleteAccount(@PathVariable Long id) throws AccountNotFoundException {
 
+        try {
+
+            service.deleteAccount(id);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (AccountNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
 }

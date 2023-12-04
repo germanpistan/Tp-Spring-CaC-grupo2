@@ -1,10 +1,7 @@
 package com.ar.cac.SpringBank.entities.dtos;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
-
-
 import lombok.*;
-
 
 import java.math.BigDecimal;
 
@@ -23,5 +20,7 @@ public class AccountDto {
 
     private String alias;
 
-    private BigDecimal amount;
+    private BigDecimal amount = BigDecimal.ZERO;
+
+    private Long ownerId;
 }

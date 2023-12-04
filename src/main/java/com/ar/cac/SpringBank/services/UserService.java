@@ -1,97 +1,117 @@
 package com.ar.cac.SpringBank.services;
-import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
+
+import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
+import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
+import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
-import com.ar.cac.SpringBank.Exceptions.enums.UserFinal;
 import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
+    public UserService(UserRepository repository) {
 
-    public List<UserDto> getUsers(){
-        List<User> users = repository.findAll();
-        List<UserDto> usersDtos = users.stream()
+        this.repository = repository;
+    }
+
+    public List<UserDto> getUsers() {
+
+        return repository.findAll().stream()
                 .map(UserMapper::userToDto)
-                .collect(Collectors.toList());
-        return usersDtos;
+                .toList();
     }
 
-    public UserDto createUser(UserDto userDto) throws UserNotExistsException {
-        User userValidated = validateUserByEmail(userDto);
-        if (userValidated == null){
-            User userSaved = repository.save(UserMapper.dtoToUser(userDto));
-            return UserMapper.userToDto(userSaved);
-        } else{
-            throw new UserNotExistsException(UserFinal.USUARIO_ORIGEN);
+    public UserDto getUserById(Long id) throws UserNotFoundException {
+
+        return repository.findById(id)
+                .map(UserMapper::userToDto)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserDto createUser(UserDto userDto) throws DuplicateEmailException, DuplicateDocumentException {
+
+        checkExistEmail(userDto.getEmail());
+        checkExistDocument(userDto.getDocument());
+
+        // TODO: Falta aplicar excepciones de validación
+
+        User userSaved = repository.save(UserMapper.dtoToUser(userDto));
+
+        return UserMapper.userToDto(userSaved);
+    }
+
+
+    public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
+
+        var user = getUserById(id);
+
+        if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
+
+        if (dto.getLastName() != null) user.setLastName(dto.getLastName());
+
+        if (dto.getEmail() != null) {
+
+            checkDuplicateEmail(dto.getEmail(), dto.getId());
+            user.setEmail(dto.getEmail());
         }
 
-    }
+        if (dto.getPassword() != null) user.setPassword(dto.getPassword());
 
+        if (dto.getDocument() != null) {
 
-    public UserDto getUserById(Long id) {
-        User entity = repository.findById(id).get();
-        return UserMapper.userToDto(entity);
-    }
-
-    public String deleteUser(Long id) throws UserNotExistsException {
-        if (repository.existsById(id)){
-            repository.deleteById(id);
-            return "El usuario con id: " + id + " ha sido eliminado";
-        } else {
-            throw new UserNotExistsException(UserFinal.USUARIO_DESTINO);
+            checkDuplicateDocument(dto.getDocument(), dto.getId());
+            user.setDocument(dto.getDocument());
         }
 
+        if (dto.getAddress() != null) user.setAddress(dto.getAddress());
+
+        if (dto.getBirthDate() != null) user.setBirthDate(dto.getBirthDate());
+
+
+        User userModified = repository.save(UserMapper.dtoToUser(user));
     }
 
-    public UserDto updateUser(Long id, UserDto dto) {
-        if (repository.existsById(id)){
-            User userToModify = repository.findById(id).get();
+    public void deleteUser(Long id) throws UserNotFoundException {
 
-            if (dto.getFirstName() != null){
-                userToModify.setFirstName(dto.getFirstName());
-            }
-
-            if (dto.getLastName() != null){
-                userToModify.setLastName(dto.getLastName());
-            }
-
-            if (dto.getEmail() != null){
-                userToModify.setEmail(dto.getEmail());
-            }
-
-            if (dto.getPassword() != null){
-                userToModify.setPassword(dto.getPassword());
-            }
-
-            if (dto.getDocument() != null){
-                userToModify.setDocument(dto.getDocument());
-            }
-            if (dto.getAddress() != null){
-                userToModify.setAddress(dto.getAddress());
-            }
-            if (dto.getBirthDate() != null){
-                userToModify.setBirthDate(dto.getBirthDate());
-            }
-
-            User userModified = repository.save(userToModify);
-
-            return UserMapper.userToDto(userModified);
-        }
-
-        return null;
+        checkExistUser(id);
+        repository.deleteById(id);
     }
 
-    public User validateUserByEmail(UserDto dto){
-        return repository.findByEmail(dto.getEmail());
+    protected void checkExistUser(Long id) throws UserNotFoundException {
+
+        var result = repository.existsById(id);
+        if (result) throw new UserNotFoundException();
+    }
+
+    protected void checkExistEmail(String email) throws DuplicateEmailException {
+
+        var result = repository.existsByEmail(email);
+        if (result) throw new DuplicateEmailException();
+    }
+
+    protected void checkDuplicateEmail(String email, Long id) throws DuplicateEmailException {
+
+        var result = repository.existsByEmailAndIdNot(email, id);
+        if (result) throw new DuplicateEmailException();
+    }
+
+    protected void checkExistDocument(String document) throws DuplicateDocumentException {
+
+        var result = repository.existsByDocument(document);
+        if (result) throw new DuplicateDocumentException();
+    }
+
+    protected void checkDuplicateDocument(String document, Long id) throws DuplicateDocumentException {
+
+        var result = repository.existsByDocumentAndIdNot(document, id);
+        if (result) throw new DuplicateDocumentException();
     }
 }

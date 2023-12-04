@@ -1,7 +1,9 @@
 package com.ar.cac.SpringBank.controllers;
 
 
-import com.ar.cac.SpringBank.Exceptions.UserNotExistsException;
+import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
+import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
+import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import com.ar.cac.SpringBank.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,42 +20,96 @@ public class UserController {
     @Autowired
     private final UserService service;
 
-    public UserController(UserService service){
+    public UserController(UserService service) {
         this.service = service;
     }
 
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers(){
-        List<UserDto> lista = service.getUsers();
-        return ResponseEntity.status(HttpStatus.OK).body(lista);
+    public ResponseEntity<List<UserDto>> getUsers() {
+
+        // Refactor
+        // List<UserDto> lista = service.getUsers();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.getUsers());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(service.getUserById(id));
-    }
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserDto user){
         try {
-            return  ResponseEntity.status(HttpStatus.CREATED).body(service.createUser(user));
-        } catch (UserNotExistsException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(service.getUserById(id));
+        } catch (UserNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 
-    @PutMapping(value="/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto user){
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateUser(id, user));
+    @PostMapping
+    public ResponseEntity<?> createUser(@RequestBody UserDto user) {
+
+        try {
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(service.createUser(user));
+
+        } catch (DuplicateEmailException | DuplicateDocumentException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
-    @DeleteMapping(value="/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) {
+
+        // TODO: Faltan validaciones
+
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(service.deleteUser(id));
-        } catch (UserNotExistsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+            service.updateUser(id, user);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (DuplicateEmailException | DuplicateDocumentException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (UserNotFoundException e2) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e2.getMessage());
+        }
+
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+
+
+        try {
+
+            service.deleteUser(id);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (UserNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 

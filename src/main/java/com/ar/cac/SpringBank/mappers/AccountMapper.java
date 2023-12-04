@@ -7,8 +7,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AccountMapper {
 
-
-    public Account dtoToAccount(AccountDto dto){
+    public Account dtoToAccount(AccountDto dto) {
         return Account.builder()
                 .cbu(dto.getCbu())
                 .id(dto.getId())
@@ -16,11 +15,9 @@ public class AccountMapper {
                 .amount(dto.getAmount())
                 .alias(dto.getAlias())
                 .build();
-
-
     }
 
-    public static AccountDto accountToDto(Account account){
+    public static AccountDto accountToDto(Account account) {
 
         return AccountDto.builder()
                 .cbu(account.getCbu())
@@ -28,6 +25,7 @@ public class AccountMapper {
                 .type(account.getType())
                 .amount(account.getAmount())
                 .alias(account.getAlias())
+                .ownerId(account.getOwner().getId())
                 .build();
 
     }

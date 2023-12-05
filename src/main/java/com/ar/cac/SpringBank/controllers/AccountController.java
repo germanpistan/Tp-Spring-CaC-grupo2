@@ -83,6 +83,8 @@ public class AccountController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e1.getMessage());
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);  //TODO
         }
     }
 

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "transfer_id") Lo quito para seguir un patron
+
     private Long id;
     @Column(name = "source_account_id")
     private Long sourceAccountId;

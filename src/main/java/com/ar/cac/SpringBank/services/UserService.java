@@ -49,7 +49,7 @@ public class UserService {
     }
 
 
-    public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
+    public void updateUser (Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
 
         var user = getUserById(id);
 
@@ -58,7 +58,6 @@ public class UserService {
         if (dto.getLastName() != null) user.setLastName(dto.getLastName());
 
         if (dto.getEmail() != null) {
-
             checkDuplicateEmail(dto.getEmail(), dto.getId());
             user.setEmail(dto.getEmail());
         }

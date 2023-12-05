@@ -23,7 +23,7 @@ public class AccountDto {
 
     private BigDecimal amount = BigDecimal.ZERO;
 
-    private User owner;
+    private User user;
 
-    private Long ownerId;
+
 }

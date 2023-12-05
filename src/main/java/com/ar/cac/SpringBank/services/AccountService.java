@@ -49,7 +49,6 @@ public class AccountService {
         userService.checkExistUser(dto.getId());
         checkExistsCbu(dto.getCbu());
         checkExistsAlias(dto.getAlias());
-        dto.setType(AccountType.CAJA_AHORRO_PESOS);
         // TODO: Se debería realizar mediante una Transaction, se buscaría el usuario, se crearía la cuenta y posteriormente se actualizaría el usuario.
         //  Tener en cuenta que directamente se puede realizar un update del usuario con la nueva cuenta. Se aceptan sugerencias.
 
@@ -98,7 +97,7 @@ public class AccountService {
     protected void checkExistAccount(Long id) throws AccountNotFoundException {
 
         var result = repository.existsById(id);
-        if (result) throw new AccountNotFoundException();
+        if (!result) throw new AccountNotFoundException();
     }
 
     protected void checkAmount(Long id, BigDecimal amount) throws InsufficientFoundsException {

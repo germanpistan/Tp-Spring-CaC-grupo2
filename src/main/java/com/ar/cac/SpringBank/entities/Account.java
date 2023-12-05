@@ -42,11 +42,8 @@ public class Account {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    private User owner;
-
-    @Column (name = "owner_id", insertable=false, updatable=false, nullable = false)
-    private Long ownerId;
-
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToMany
     private List<Transfer> transfer;

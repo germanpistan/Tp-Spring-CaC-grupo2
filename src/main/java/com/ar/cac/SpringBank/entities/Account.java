@@ -21,28 +21,31 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "account_type", nullable = false)
+    @Column(name = "account_type")
     private AccountType type;
 
-    @Column(name = "cbu", nullable = false, unique = true)
+    @Column(name = "cbu", unique = true)
     private String cbu;
 
-    @Column(name = "alias", nullable = false, unique = true)
+    @Column(name = "alias", unique = true)
     private String alias;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount")
     private BigDecimal amount = BigDecimal.ZERO;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @ManyToOne
     private User owner;
+
+    private Long ownerId;
+
 
     @OneToMany
     private List<Transfer> transfer;

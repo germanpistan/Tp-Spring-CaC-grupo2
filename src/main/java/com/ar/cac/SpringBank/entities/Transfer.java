@@ -18,9 +18,9 @@ public class Transfer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     //@Column(name = "transfer_id") Lo quito para seguir un patron
     private Long id;
-    @Column(name = "source_account_id", nullable = false)
+    @Column(name = "source_account_id")
     private Long sourceAccountId;
-    @Column(name = "target_account_id", nullable = false)
+    @Column(name = "target_account_id")
     private Long targetAccountId;
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

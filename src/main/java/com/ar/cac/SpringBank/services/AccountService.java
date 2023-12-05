@@ -2,6 +2,7 @@ package com.ar.cac.SpringBank.services;
 
 
 import com.ar.cac.SpringBank.Exceptions.*;
+import com.ar.cac.SpringBank.Exceptions.enums.UserFinal;
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import com.ar.cac.SpringBank.entities.enums.AccountType;
@@ -43,16 +44,12 @@ public class AccountService {
                 .orElseThrow(AccountNotFoundException::new);
     }
 
-    public AccountDto createAccount(AccountDto dto) throws DuplicateCbuException, DuplicateAliasException, UserNotFoundException {
+    public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
 
-        userService.checkExistUser(dto.getOwnerId());
-        dto.setType(AccountType.CAJA_AHORRO_PESOS);
-        dto.setAmount(BigDecimal.ZERO);
+        userService.checkExistUser(dto.getId());
         checkExistsCbu(dto.getCbu());
         checkExistsAlias(dto.getAlias());
-
-
-
+        dto.setType(AccountType.CAJA_AHORRO_PESOS);
         // TODO: Se debería realizar mediante una Transaction, se buscaría el usuario, se crearía la cuenta y posteriormente se actualizaría el usuario.
         //  Tener en cuenta que directamente se puede realizar un update del usuario con la nueva cuenta. Se aceptan sugerencias.
 

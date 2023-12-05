@@ -78,7 +78,7 @@ public class UserController {
             service.updateUser(id, user);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.OK)
                     .build();
         } catch (DuplicateEmailException | DuplicateDocumentException e) {
 
@@ -103,7 +103,7 @@ public class UserController {
             service.deleteUser(id);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.OK)
                     .build();
         } catch (UserNotFoundException e) {
 

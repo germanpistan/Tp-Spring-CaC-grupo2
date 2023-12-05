@@ -69,7 +69,6 @@ public class AccountService {
 
                 checkDuplicateAlias(dto.getId(), dto.getAlias());
                 acc.setAlias(dto.getAlias());
-
             }
 
             if (dto.getAmount() != null) {

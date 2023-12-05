@@ -71,7 +71,7 @@ public class AccountController {
             service.updateAccount (id, account);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.OK)
                     .build();
         } catch (DuplicateCbuException | DuplicateAliasException e) {
 

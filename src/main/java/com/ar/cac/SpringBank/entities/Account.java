@@ -44,8 +44,7 @@ public class Account {
     @ManyToOne
     private User owner;
 
-    @Column (name = "owner_id", insertable=false, updatable=false)
-
+    @Column (name = "owner_id", insertable=false, updatable=false, nullable = false)
     private Long ownerId;
 
 

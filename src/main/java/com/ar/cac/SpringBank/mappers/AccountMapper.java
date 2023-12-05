@@ -15,6 +15,7 @@ public class AccountMapper {
                 .amount(dto.getAmount())
                 .alias(dto.getAlias())
                 .ownerId(dto.getOwnerId())
+                .owner(dto.getOwner())
                 .build();
     }
 
@@ -27,6 +28,7 @@ public class AccountMapper {
                 .amount(account.getAmount())
                 .alias(account.getAlias())
                 .ownerId(account.getOwnerId())
+                .owner(account.getOwner())
                 .build();
 
     }

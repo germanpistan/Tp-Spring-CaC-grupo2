@@ -106,7 +106,7 @@ public class AccountService {
     protected void checkAmount(Long id, BigDecimal amount) throws InsufficientFoundsException {
 
         var result = repository.existsByIdAndAmountGreaterThanEqual(id, amount);
-        if (!result) throw new InsufficientFoundsException();
+        if (result) throw new InsufficientFoundsException();
     }
 
     protected void checkExistsCbu( String cbu) throws DuplicateCbuException {
@@ -116,7 +116,7 @@ public class AccountService {
 
     protected void checkDuplicateCbu(Long id, String cbu) throws DuplicateCbuException {
         var result= repository.existsByCbuAndIdNot(cbu, id);
-        if (!result) throw new DuplicateCbuException();
+        if (result) throw new DuplicateCbuException();
     }
 
     protected void checkExistsAlias(String alias) throws DuplicateAliasException {
@@ -126,7 +126,7 @@ public class AccountService {
 
     protected void checkDuplicateAlias(Long id, String alias) throws DuplicateAliasException {
         var result= repository.existsByAliasAndIdNot(alias,id);
-        if (!result) throw new DuplicateAliasException();
+        if (result) throw new DuplicateAliasException();
 
         }
 }

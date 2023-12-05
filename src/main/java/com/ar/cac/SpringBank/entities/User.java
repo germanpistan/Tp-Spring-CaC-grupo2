@@ -34,10 +34,10 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "document", nullable = false, unique = true)
+    @Column(name = "document", unique = true)
     private String document;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 

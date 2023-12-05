@@ -61,40 +61,36 @@ public class TransferService {
         return TransferMapper.transferToDto(entity);
     }
 
-    //TODO ESTO LO AGREGO DEL REPO DE LA MAÑANA, PARA QUE REVISEMOS. ME PARECE QUE ASI ES LA FORMA DE COMPROBACION
     @Transactional
     public TransferDto performTransfer(TransferDto dto) throws AccountNotFoundException, InsufficientFoundsException {
-        // Comprobar si las cuentas de origen y destino existen
+
         Account originAccount = accountRepository.findById(dto.getSourceAccountId())
                 .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getSourceAccountId()));
         Account destinationAccount = accountRepository.findById(dto.getTargetAccountId())
                 .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getTargetAccountId()));
 
-        // Comprobar si la cuenta de origen tiene fondos suficientes
+
         if (originAccount.getAmount().compareTo(dto.getAmount()) < 0) {
             throw new InsufficientFoundsException("Insufficient funds in the account with id: " + dto.getSourceAccountId());
         }
 
-        // Realizar la transferencia
+
         originAccount.setAmount(originAccount.getAmount().subtract(dto.getAmount()));
         destinationAccount.setAmount(destinationAccount.getAmount().add(dto.getAmount()));
 
-        // Guardar las cuentas actualizadas
+
         accountRepository.save(originAccount);
         accountRepository.save(destinationAccount);
 
-        // Crear la transferencia y guardarla en la base de datos
+
         Transfer transfer = new Transfer();
-        // Creamos un objeto del tipo Date para obtener la fecha actual
-        //LocalDateTime date = LocalDateTime.now(); Ya no es necesario, se crea automáticamente
-        // Seteamos el objeto fecha actual en el transferDto
-        //transfer.setDate(date);
+
         transfer.setSourceAccountId(originAccount.getId());
         transfer.setTargetAccountId(destinationAccount.getId());
         transfer.setAmount(dto.getAmount());
         transfer = repository.save(transfer);
 
-        // Devolver el DTO de la transferencia realizada
+
         return TransferMapper.transferToDto(transfer);
     }
 }

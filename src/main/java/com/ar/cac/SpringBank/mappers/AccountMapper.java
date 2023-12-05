@@ -1,21 +1,21 @@
 package com.ar.cac.SpringBank.mappers;
 
 import com.ar.cac.SpringBank.entities.Account;
+import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AccountMapper {
 
-    public Account dtoToAccount(AccountDto dto) {
+    public Account dtoToAccount(AccountDto dto, User user) {
         return Account.builder()
-                .cbu(dto.getCbu())
                 .id(dto.getId())
+                .cbu(dto.getCbu())
                 .type(dto.getType())
                 .amount(dto.getAmount())
                 .alias(dto.getAlias())
-                .ownerId(dto.getOwnerId())
-                .owner(dto.getOwner())
+                .user((user))
                 .build();
     }
 
@@ -27,8 +27,7 @@ public class AccountMapper {
                 .type(account.getType())
                 .amount(account.getAmount())
                 .alias(account.getAlias())
-                .ownerId(account.getOwnerId())
-                .owner(account.getOwner())
+                .userId(account.getUser().getId())
                 .build();
 
     }

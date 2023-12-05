@@ -100,7 +100,7 @@ public class UserService {
     protected void checkDuplicateEmail(String email, Long id) throws DuplicateEmailException {
 
         var result = repository.existsByEmailAndIdNot(email, id);
-        if (result) throw new DuplicateEmailException();
+        if (!result) throw new DuplicateEmailException();
     }
 
     protected void checkExistDocument(String document) throws DuplicateDocumentException {
@@ -112,6 +112,6 @@ public class UserService {
     protected void checkDuplicateDocument(String document, Long id) throws DuplicateDocumentException {
 
         var result = repository.existsByDocumentAndIdNot(document, id);
-        if (result) throw new DuplicateDocumentException();
+        if (!result) throw new DuplicateDocumentException();
     }
 }

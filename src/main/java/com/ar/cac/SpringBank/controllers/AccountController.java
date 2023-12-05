@@ -63,7 +63,7 @@ public class AccountController {
         }
     }
 
-    @PutMapping
+    @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws DuplicateCbuException, DuplicateAliasException {
 
         try {

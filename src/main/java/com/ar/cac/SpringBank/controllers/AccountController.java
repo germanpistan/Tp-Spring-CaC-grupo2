@@ -64,7 +64,7 @@ public class AccountController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws DuplicateCbuException, DuplicateAliasException {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, UserNotFoundException,DuplicateCbuException, DuplicateAliasException {
 
         try {
 
@@ -78,13 +78,11 @@ public class AccountController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
-        } catch (AccountNotFoundException e1) {
+        } catch (AccountNotFoundException | UserNotFoundException e1) {
 
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e1.getMessage());
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);  //TODO
         }
     }
 

@@ -45,7 +45,7 @@ public class AccountService {
                 .orElseThrow(AccountNotFoundException::new);
     }
 
-    public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
+    public AccountDto createAccount(AccountDto dto) throws DuplicateCbuException, DuplicateAliasException, UserNotFoundException {
 
         var user = userService.getUserById(dto.getUserId());
         checkExistsCbu(dto.getCbu());
@@ -110,7 +110,7 @@ public class AccountService {
 
     protected void checkExistsCbu( String cbu) throws DuplicateCbuException {
         var result= repository.existsByCbu(cbu);
-        if(result) throw new DuplicateCbuException();
+        if (result) throw new DuplicateCbuException();
     }
 
     protected void checkDuplicateCbu(Long id, String cbu) throws DuplicateCbuException {
@@ -120,7 +120,7 @@ public class AccountService {
 
     protected void checkExistsAlias(String alias) throws DuplicateAliasException {
         var result= repository.existsByAlias(alias);
-        if(result) throw new DuplicateAliasException();
+        if (result) throw new DuplicateAliasException();
     }
 
     protected void checkDuplicateAlias(Long id, String alias) throws DuplicateAliasException {

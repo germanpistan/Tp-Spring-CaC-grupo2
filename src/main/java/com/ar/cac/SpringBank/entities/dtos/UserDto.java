@@ -19,4 +19,8 @@ public class UserDto {
     private String document;
     private LocalDate birthDate;
     private String address;
+    private boolean isEnabled = true;
+
+    public UserDto(Long id) {
+    }
 }

@@ -79,10 +79,15 @@ public class UserService {
         User userModified = repository.save(UserMapper.dtoToUser(user));
     }
 
-    public void deleteUser(Long id) throws UserNotFoundException {
+    public void disableUser(Long id) throws UserNotFoundException {
 
-        checkExistUser(id);
-        repository.deleteById(id);
+        if (repository.existsById(id)) {
+            User user = repository.findById(id).get();
+            user.setEnabled(false);
+            repository.save(user);
+        } else{
+            throw new UserNotFoundException();
+        }
     }
 
     protected void checkExistUser(Long id) throws UserNotFoundException {

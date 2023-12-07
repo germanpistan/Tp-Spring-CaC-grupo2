@@ -100,7 +100,7 @@ public class UserController {
 
         try {
 
-            service.deleteUser(id);
+            service.disableUser(id);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

@@ -52,6 +52,8 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    boolean isEnabled = true;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Account> accounts;
 }

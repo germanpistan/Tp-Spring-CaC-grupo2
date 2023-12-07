@@ -54,4 +54,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Account> accounts;
+
+    @Column(name = "is_enabled",  nullable = false)
+    boolean isEnabled = true;
 }

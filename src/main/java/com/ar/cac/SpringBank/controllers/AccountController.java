@@ -96,7 +96,7 @@ public class AccountController {
             service.deleteAccount(id);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.OK)
                     .build();
         } catch (AccountNotFoundException e) {
 

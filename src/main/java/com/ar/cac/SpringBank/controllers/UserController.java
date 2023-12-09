@@ -71,8 +71,6 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) {
 
-        // TODO: Faltan validaciones
-
         try {
 
             service.updateUser(id, user);

@@ -26,9 +26,6 @@ public class Transfer {
     @CreationTimestamp
     private LocalDateTime date;
     private BigDecimal amount = BigDecimal.ZERO;
-
-
-    //falta refactor aca en la relacion entre el creador de las cuentas y las transferencias.
     @ManyToOne
     private Account creator;
 

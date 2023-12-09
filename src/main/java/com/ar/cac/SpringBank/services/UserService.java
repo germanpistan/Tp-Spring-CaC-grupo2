@@ -90,9 +90,6 @@ public class UserService {
     }
 
 
-
-
-
     protected void checkExistUser(Long id) throws UserNotFoundException {
 
         var result = repository.existsById(id);

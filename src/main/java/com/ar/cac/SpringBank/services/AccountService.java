@@ -2,12 +2,12 @@ package com.ar.cac.SpringBank.services;
 
 
 import com.ar.cac.SpringBank.Exceptions.*;
-import com.ar.cac.SpringBank.Exceptions.enums.UserFinal;
+
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
-import com.ar.cac.SpringBank.entities.enums.AccountType;
+
 import com.ar.cac.SpringBank.mappers.AccountMapper;
-import com.ar.cac.SpringBank.mappers.UserMapper;
+
 import com.ar.cac.SpringBank.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,12 @@ public class AccountService {
     @Autowired
     private AccountRepository repository;
 
-    @Autowired
-    private final UserService userService;
 
-    public AccountService(AccountRepository repository, UserService userService) {
+
+    public AccountService(AccountRepository repository) {
 
         this.repository = repository;
-        this.userService = userService;
+
     }
 
     public List<AccountDto> getAccounts() {
@@ -45,17 +44,11 @@ public class AccountService {
                 .orElseThrow(AccountNotFoundException::new);
     }
 
-    public AccountDto createAccount(AccountDto dto) throws DuplicateCbuException, DuplicateAliasException, UserNotFoundException {
-
-        var user = userService.getUserById(dto.getUserId());
+    public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
         checkExistsCbu(dto.getCbu());
         checkExistsAlias(dto.getAlias());
-        //dto.setType(AccountType.CAJA_AHORRO_PESOS);
-        // TODO: Se debería realizar mediante una Transaction, se buscaría el usuario, se crearía la cuenta y posteriormente se actualizaría el usuario.
-        //  Tener en cuenta que directamente se puede realizar un update del usuario con la nueva cuenta. Se aceptan sugerencias.
 
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto , UserMapper.dtoToUser(user)));
-
+        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto));
         return AccountMapper.accountToDto(accountSaved);
     }
 
@@ -63,12 +56,12 @@ public class AccountService {
 
 
             var acc = getAccountById(id);
-            var user = userService.getUserById(acc.getUserId());
 
             if (dto.getAlias() != null) {
 
                 checkDuplicateAlias(dto.getId(), dto.getAlias());
                 acc.setAlias(dto.getAlias());
+
             }
 
             if (dto.getAmount() != null) {
@@ -84,7 +77,7 @@ public class AccountService {
                 acc.setCbu(dto.getCbu());
             }
 
-            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc, UserMapper.dtoToUser(user)));
+            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc));
 
     }
 
@@ -110,7 +103,7 @@ public class AccountService {
 
     protected void checkExistsCbu( String cbu) throws DuplicateCbuException {
         var result= repository.existsByCbu(cbu);
-        if (result) throw new DuplicateCbuException();
+        if(result) throw new DuplicateCbuException();
     }
 
     protected void checkDuplicateCbu(Long id, String cbu) throws DuplicateCbuException {
@@ -120,7 +113,7 @@ public class AccountService {
 
     protected void checkExistsAlias(String alias) throws DuplicateAliasException {
         var result= repository.existsByAlias(alias);
-        if (result) throw new DuplicateAliasException();
+        if(result) throw new DuplicateAliasException();
     }
 
     protected void checkDuplicateAlias(Long id, String alias) throws DuplicateAliasException {

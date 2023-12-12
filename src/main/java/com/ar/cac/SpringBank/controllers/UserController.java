@@ -71,8 +71,6 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) throws DuplicateDocumentException,DuplicateEmailException,UserNotFoundException{
 
-        // TODO: Faltan validaciones
-
         try {
 
             service.updateUser(id, user);
@@ -100,11 +98,10 @@ public class UserController {
 
         try {
 
-            service.deleteUser(id);
-
-            return ResponseEntity
+            service.disableUser(id);
+            return (ResponseEntity
                     .status(HttpStatus.OK)
-                    .build();
+                    .build());
         } catch (UserNotFoundException e) {
 
             return ResponseEntity

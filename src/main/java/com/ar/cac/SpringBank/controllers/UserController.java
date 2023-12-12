@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) throws UserNotFoundException{
 
         try {
 
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserDto user) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto user) throws DuplicateEmailException,DuplicateDocumentException {
 
         try {
 
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) throws DuplicateDocumentException,DuplicateEmailException,UserNotFoundException{
 
         // TODO: Faltan validaciones
 
@@ -95,7 +95,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException{
 
 
         try {

@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<?> getAccountById(@PathVariable Long id) throws AccountNotFoundException {
 
         try {
 
@@ -47,7 +47,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) {
+    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) throws DuplicateAliasException,DuplicateCbuException,UserNotFoundException {
 
         try {
 

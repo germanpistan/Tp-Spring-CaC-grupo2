@@ -4,11 +4,15 @@ package com.ar.cac.SpringBank.services;
 import com.ar.cac.SpringBank.Exceptions.*;
 
 import com.ar.cac.SpringBank.entities.Account;
+import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 
+import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import com.ar.cac.SpringBank.mappers.AccountMapper;
 
+import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.AccountRepository;
+import com.ar.cac.SpringBank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,8 @@ public class AccountService {
 
     @Autowired
     private AccountRepository repository;
+    @Autowired
+    private UserService userService;
 
 
 
@@ -45,10 +51,14 @@ public class AccountService {
     }
 
     public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
+
+
         checkExistsCbu(dto.getCbu());
         checkExistsAlias(dto.getAlias());
+        UserDto user= userService.getUserById(dto.getUserId());
 
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto));
+
+        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto,UserMapper.dtoToUser(user)));
         return AccountMapper.accountToDto(accountSaved);
     }
 
@@ -56,6 +66,7 @@ public class AccountService {
 
 
             var acc = getAccountById(id);
+            var user = userService.getUserById(dto.getUserId());
 
             if (dto.getAlias() != null) {
 
@@ -77,7 +88,7 @@ public class AccountService {
                 acc.setCbu(dto.getCbu());
             }
 
-            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc));
+            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc,UserMapper.dtoToUser(user)));
 
     }
 

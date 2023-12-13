@@ -1,7 +1,6 @@
 package com.ar.cac.SpringBank.mappers;
 
 import com.ar.cac.SpringBank.entities.Account;
-import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import lombok.experimental.UtilityClass;
 

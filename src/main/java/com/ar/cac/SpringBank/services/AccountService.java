@@ -66,7 +66,7 @@ public class AccountService {
 
 
             var acc = getAccountById(id);
-            var user = userService.getUserById(dto.getUserId());
+            var user = userService.getUserById(id);
 
             if (dto.getAlias() != null) {
 

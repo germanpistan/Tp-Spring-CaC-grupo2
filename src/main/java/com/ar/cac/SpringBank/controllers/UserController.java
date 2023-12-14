@@ -68,7 +68,7 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
 
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) {
+
 
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) throws DuplicateDocumentException,DuplicateEmailException,UserNotFoundException{
 

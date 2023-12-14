@@ -63,10 +63,8 @@ public class AccountService {
 
     public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
 
-        checkExistsCbu(dto.getCbu());
-        checkExistsAlias(dto.getAlias());
 
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto));
+
 
 
 
@@ -75,7 +73,7 @@ public class AccountService {
         UserDto user= userService.getUserById(dto.getUserId());
 
 
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto,UserMapper.dtoToUser(user)));
+        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto));
 
         return AccountMapper.accountToDto(accountSaved);
     }
@@ -109,9 +107,9 @@ public class AccountService {
             }
 
 
-            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc));
 
-            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc,UserMapper.dtoToUser(user)));
+
+            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc));
 
 
     }

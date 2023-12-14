@@ -41,15 +41,13 @@ public class UserService {
         checkExistEmail(userDto.getEmail());
         checkExistDocument(userDto.getDocument());
 
-        // TODO: Falta aplicar excepciones de validación
-
         User userSaved = repository.save(UserMapper.dtoToUser(userDto));
 
         return UserMapper.userToDto(userSaved);
     }
 
 
-    public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
+    public void updateUser (Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
 
         var user = getUserById(id);
         if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
@@ -67,6 +65,8 @@ public class UserService {
         if (dto.getBirthDate() != null) user.setBirthDate(dto.getBirthDate());
         User userModified = repository.save(UserMapper.dtoToUser(user));
     }
+
+
     public void disableUser(Long id) throws UserNotFoundException {
         if (repository.existsById(id)) {
             User user = repository.findById(id).get();

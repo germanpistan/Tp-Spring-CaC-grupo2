@@ -16,6 +16,7 @@ public class UserMapper {
                 .password(dto.getPassword())
                 .birthDate(dto.getBirthDate())
                 .address(dto.getAddress())
+                .isEnabled(dto.isEnabled())
                 .build();
     }
 
@@ -29,6 +30,7 @@ public class UserMapper {
                 .password(user.getPassword())
                 .birthDate(user.getBirthDate())
                 .address(user.getAddress())
+                .isEnabled(user.isEnabled())
                 .build();
     }
 }

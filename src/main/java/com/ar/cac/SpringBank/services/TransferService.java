@@ -30,20 +30,12 @@ public class TransferService {
 
     public List<TransferDto> getTransfers() {
 
-        // Refactor
-        /*List<Transfer> transfers = repository.findAll();
-        return transfers.stream()
-                .map(TransferMapper::transferToDto)
-                .collect(Collectors.toList());*/
 
         return repository.findAll().stream().map(TransferMapper::transferToDto).toList();
     }
 
     public TransferDto getTransferById(Long id) throws TransferNotFoundException {
 
-        /*Transfer transfer = repository.findById(id).orElseThrow(TransferNotFoundException::new);
-        return TransferMapper.transferToDto(transfer);*/
-        // Refactor
 
         return repository.findById(id).map(TransferMapper::transferToDto).orElseThrow(TransferNotFoundException::new);
     }

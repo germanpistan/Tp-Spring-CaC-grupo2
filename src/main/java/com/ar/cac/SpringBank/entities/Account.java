@@ -46,7 +46,6 @@ public class Account {
     @JoinColumn (name = "user_id")
     private User user;
 
-
     @OneToMany
     private List<Transfer> transfer;
 }

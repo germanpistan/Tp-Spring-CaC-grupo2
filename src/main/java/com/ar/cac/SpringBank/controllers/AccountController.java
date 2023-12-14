@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<?> getAccountById(@PathVariable Long id) throws AccountNotFoundException {
 
         try {
 
@@ -47,7 +47,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) {
+    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) throws DuplicateAliasException,DuplicateCbuException,UserNotFoundException {
 
         try {
 
@@ -55,7 +55,7 @@ public class AccountController {
                     .status(HttpStatus.CREATED)
                     .body(service.createAccount(account));
 
-        } catch (UserNotFoundException | DuplicateCbuException | DuplicateAliasException e) {
+        } catch (DuplicateCbuException | DuplicateAliasException | UserNotFoundException e) {
 
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -64,7 +64,7 @@ public class AccountController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, DuplicateCbuException, DuplicateAliasException {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, UserNotFoundException,DuplicateCbuException, DuplicateAliasException {
 
         try {
 
@@ -78,13 +78,11 @@ public class AccountController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
-        } catch (AccountNotFoundException e1) {
+        } catch (AccountNotFoundException | UserNotFoundException e1) {
 
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e1.getMessage());
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);  //TODO
         }
     }
 
@@ -96,7 +94,7 @@ public class AccountController {
             service.deleteAccount(id);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.OK)
                     .build();
         } catch (AccountNotFoundException e) {
 

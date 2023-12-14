@@ -52,33 +52,21 @@ public class UserService {
     public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
 
         var user = getUserById(id);
-
         if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
-
         if (dto.getLastName() != null) user.setLastName(dto.getLastName());
-
         if (dto.getEmail() != null) {
-
             checkDuplicateEmail(dto.getEmail(), dto.getId());
             user.setEmail(dto.getEmail());
         }
-
         if (dto.getPassword() != null) user.setPassword(dto.getPassword());
-
         if (dto.getDocument() != null) {
-
             checkDuplicateDocument(dto.getDocument(), dto.getId());
             user.setDocument(dto.getDocument());
         }
-
         if (dto.getAddress() != null) user.setAddress(dto.getAddress());
-
         if (dto.getBirthDate() != null) user.setBirthDate(dto.getBirthDate());
-
-
         User userModified = repository.save(UserMapper.dtoToUser(user));
     }
-
     public void disableUser(Long id) throws UserNotFoundException {
         if (repository.existsById(id)) {
             User user = repository.findById(id).get();

@@ -28,8 +28,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
 
-        // Refactor
-        // List<UserDto> lista = service.getUsers();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(service.getUsers());

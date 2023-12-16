@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
-    @Autowired
+
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -47,7 +48,7 @@ public class UserService {
     }
 
 
-    public void updateUser (Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
+    public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
 
         var user = getUserById(id);
 
@@ -77,13 +78,11 @@ public class UserService {
     }
 
     public void disableUser(Long id) throws UserNotFoundException {
-        if (repository.existsById(id)) {
-            User user = repository.findById(id).get();
-            user.setEnabled(false);
-            repository.save(user);
-        } else {
-            throw new UserNotFoundException ();
-        }
+
+        var user = repository.findById(id).orElseThrow(UserNotFoundException::new);
+        user.setEnabled(!user.isEnabled());
+
+        repository.save(user);
     }
 
 

@@ -1,8 +1,8 @@
 package com.ar.cac.SpringBank.Exceptions;
 
-public class DuplicateCbuException extends Exception{
+public class DuplicateCbuException extends Exception {
 
-    public DuplicateCbuException(){
+    public DuplicateCbuException() {
         super("El cbu ya se encuentra registado");
     }
 }

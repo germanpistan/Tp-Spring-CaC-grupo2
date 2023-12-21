@@ -1,10 +1,15 @@
 package com.ar.cac.SpringBank.entities;
 
+import com.ar.cac.SpringBank.records.user.NewUserRecord;
+import com.ar.cac.SpringBank.records.user.UpdateUserRecord;
+import com.ar.cac.SpringBank.records.user.UserRecord;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
 public class User {
 
     @Id
@@ -38,7 +42,6 @@ public class User {
     private String document;
 
     @Column(name = "birth_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @Column(name = "address")
@@ -55,6 +58,42 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Account> accounts;
 
-    @Column(name = "is_enabled",  nullable = false)
+    @Column(name = "is_enabled", nullable = false)
     boolean isEnabled = true;
+
+    public User(UserRecord record) {
+
+        this.id = record.id();
+        this.lastName = record.lastName();
+        this.firstName = record.firstName();
+        this.email = record.email();
+        this.password = record.password();
+        this.document = record.document();
+        ;
+        this.birthDate = record.birthDate();
+        this.address = record.address();
+    }
+
+    public User(NewUserRecord record) {
+
+        this.lastName = record.lastName();
+        this.firstName = record.firstName();
+        this.email = record.email();
+        this.password = record.password();
+        this.document = record.document();
+        ;
+        this.birthDate = record.birthDate();
+        this.address = record.address();
+    }
+
+    public void update(UpdateUserRecord record) {
+
+        if (record.lastName() != null) this.lastName = record.lastName();
+        if (record.firstName() != null) this.firstName = record.firstName();
+        if (record.email() != null) this.email = record.email();
+        if (record.password() != null) this.password = record.password();
+        if (record.document() != null) this.document = record.document();
+        if (record.birthDate() != null) this.birthDate = record.birthDate();
+        if (record.address() != null) this.address = record.address();
+    }
 }

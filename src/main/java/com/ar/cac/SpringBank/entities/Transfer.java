@@ -1,5 +1,6 @@
 package com.ar.cac.SpringBank.entities;
 
+import com.ar.cac.SpringBank.records.transfer.TransferRecord;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,4 +30,12 @@ public class Transfer {
     @ManyToOne
     private Account creator;
 
+    public Transfer(TransferRecord record) {
+
+        this.id = record.id();
+        this.sourceAccountId = record.sourceAccount();
+        this.targetAccountId = record.targetAccount();
+        this.date = record.date();
+        this.amount = record.amount();
+    }
 }

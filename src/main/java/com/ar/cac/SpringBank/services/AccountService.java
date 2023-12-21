@@ -2,17 +2,11 @@ package com.ar.cac.SpringBank.services;
 
 
 import com.ar.cac.SpringBank.Exceptions.*;
-
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
-
-import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import com.ar.cac.SpringBank.mappers.AccountMapper;
-
-import com.ar.cac.SpringBank.mappers.UserMapper;
 import com.ar.cac.SpringBank.repositories.AccountRepository;
-import com.ar.cac.SpringBank.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +20,6 @@ public class AccountService {
     private AccountRepository repository;
     @Autowired
     private UserService userService;
-
 
 
     public AccountService(AccountRepository repository) {
@@ -55,45 +48,45 @@ public class AccountService {
 
         checkExistsCbu(dto.getCbu());
         checkExistsAlias(dto.getAlias());
-        UserDto user= userService.getUserById(dto.getUserId());
+        var user = userService.getUserById(dto.getUserId());
 
 
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto,UserMapper.dtoToUser(user)));
+        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto, new User(user)));
         return AccountMapper.accountToDto(accountSaved);
     }
 
-    public void updateAccount (Long id, AccountDto dto) throws DuplicateAliasException, DuplicateCbuException, AccountNotFoundException, UserNotFoundException {
+    public void updateAccount(Long id, AccountDto dto) throws DuplicateAliasException, DuplicateCbuException, AccountNotFoundException, UserNotFoundException {
 
 
-            var acc = getAccountById(id);
-            var user = userService.getUserById(id);
+        var acc = getAccountById(id);
+        var user = userService.getUserById(id);
 
-            if (dto.getAlias() != null) {
+        if (dto.getAlias() != null) {
 
-                checkDuplicateAlias(dto.getId(), dto.getAlias());
-                acc.setAlias(dto.getAlias());
+            checkDuplicateAlias(dto.getId(), dto.getAlias());
+            acc.setAlias(dto.getAlias());
 
-            }
+        }
 
-            if (dto.getAmount() != null) {
-                acc.setAmount(dto.getAmount());
-            }
+        if (dto.getAmount() != null) {
+            acc.setAmount(dto.getAmount());
+        }
 
-            if (dto.getType() != null) {
-                acc.setType(dto.getType());
-            }
+        if (dto.getType() != null) {
+            acc.setType(dto.getType());
+        }
 
-            if (dto.getCbu() != null) {
-                checkDuplicateCbu(dto.getId(), dto.getCbu());
-                acc.setCbu(dto.getCbu());
-            }
+        if (dto.getCbu() != null) {
+            checkDuplicateCbu(dto.getId(), dto.getCbu());
+            acc.setCbu(dto.getCbu());
+        }
 
-            Account accountModified = repository.save(AccountMapper.dtoToAccount(acc,UserMapper.dtoToUser(user)));
+        Account accountModified = repository.save(AccountMapper.dtoToAccount(acc, new User(user)));
 
     }
 
 
-    public void deleteAccount (Long id) throws AccountNotFoundException {
+    public void deleteAccount(Long id) throws AccountNotFoundException {
 
         checkExistAccount(id);
         repository.deleteById(id);
@@ -112,24 +105,24 @@ public class AccountService {
         if (result) throw new InsufficientFoundsException();
     }
 
-    protected void checkExistsCbu( String cbu) throws DuplicateCbuException {
-        var result= repository.existsByCbu(cbu);
-        if(result) throw new DuplicateCbuException();
+    protected void checkExistsCbu(String cbu) throws DuplicateCbuException {
+        var result = repository.existsByCbu(cbu);
+        if (result) throw new DuplicateCbuException();
     }
 
     protected void checkDuplicateCbu(Long id, String cbu) throws DuplicateCbuException {
-        var result= repository.existsByCbuAndIdNot(cbu, id);
+        var result = repository.existsByCbuAndIdNot(cbu, id);
         if (result) throw new DuplicateCbuException();
     }
 
     protected void checkExistsAlias(String alias) throws DuplicateAliasException {
-        var result= repository.existsByAlias(alias);
-        if(result) throw new DuplicateAliasException();
+        var result = repository.existsByAlias(alias);
+        if (result) throw new DuplicateAliasException();
     }
 
     protected void checkDuplicateAlias(Long id, String alias) throws DuplicateAliasException {
-        var result= repository.existsByAliasAndIdNot(alias,id);
+        var result = repository.existsByAliasAndIdNot(alias, id);
         if (result) throw new DuplicateAliasException();
 
-        }
+    }
 }

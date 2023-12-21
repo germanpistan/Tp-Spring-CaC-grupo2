@@ -22,10 +22,10 @@ public class Account {
     private Long id;
 
     @Column(name = "account_type")
-    @Enumerated (EnumType.ORDINAL)
+    @Enumerated(EnumType.ORDINAL)
     private AccountType type;
 
-    @Column(name = "cbu",  unique = true)
+    @Column(name = "cbu", unique = true)
     private String cbu;
 
     @Column(name = "alias", unique = true)
@@ -43,7 +43,7 @@ public class Account {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn (name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany

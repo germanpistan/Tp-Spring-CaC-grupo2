@@ -3,7 +3,6 @@ package com.ar.cac.SpringBank.mappers;
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
-import com.ar.cac.SpringBank.entities.dtos.UserDto;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

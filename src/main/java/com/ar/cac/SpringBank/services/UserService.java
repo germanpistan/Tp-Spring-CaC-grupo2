@@ -3,15 +3,16 @@ package com.ar.cac.SpringBank.services;
 import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
 import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
 import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
+import com.ar.cac.SpringBank.Exceptions.validations.EmailFormatException;
 import com.ar.cac.SpringBank.entities.User;
-import com.ar.cac.SpringBank.entities.dtos.UserDto;
-import com.ar.cac.SpringBank.mappers.UserMapper;
+import com.ar.cac.SpringBank.records.user.NewUserRecord;
+import com.ar.cac.SpringBank.records.user.UpdateUserRecord;
+import com.ar.cac.SpringBank.records.user.UserRecord;
 import com.ar.cac.SpringBank.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ar.cac.SpringBank.utils.Validations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -23,21 +24,37 @@ public class UserService {
         this.repository = repository;
     }
 
-    public List<UserDto> getUsers() {
+    /*public List<UserDto> getUsers() {
 
         return repository.findAll().stream()
                 .map(UserMapper::userToDto)
                 .toList();
+    }*/
+
+    public List<UserRecord> getUsers() {
+
+        return repository.findAll().stream()
+                .filter(User::isEnabled)
+                .map(UserRecord::new)
+                .toList();
     }
 
-    public UserDto getUserById(Long id) throws UserNotFoundException {
+    /*public UserDto getUserById(Long id) throws UserNotFoundException {
 
         return repository.findById(id)
                 .map(UserMapper::userToDto)
                 .orElseThrow(UserNotFoundException::new);
+    }*/
+
+    public UserRecord getUserById(Long id) throws UserNotFoundException {
+
+        return repository.findById(id)
+                .filter(User::isEnabled)
+                .map(UserRecord::new)
+                .orElseThrow(UserNotFoundException::new);
     }
 
-    public UserDto createUser(UserDto userDto) throws DuplicateEmailException, DuplicateDocumentException {
+    /*public UserDto createUser(UserDto userDto) throws DuplicateEmailException, DuplicateDocumentException {
 
         checkExistEmail(userDto.getEmail());
         checkExistDocument(userDto.getDocument());
@@ -45,10 +62,22 @@ public class UserService {
         User userSaved = repository.save(UserMapper.dtoToUser(userDto));
 
         return UserMapper.userToDto(userSaved);
+    }*/
+
+    public UserRecord createUser(NewUserRecord record) throws DuplicateEmailException, DuplicateDocumentException {
+
+        checkExistEmail(record.email());
+        checkExistDocument(record.document());
+
+        return new UserRecord(
+                repository.save(
+                        new User(record)
+                )
+        );
     }
 
 
-    public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
+    /*public void updateUser(Long id, UserDto dto) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException {
 
         var user = getUserById(id);
 
@@ -75,6 +104,20 @@ public class UserService {
 
 
         User userModified = repository.save(UserMapper.dtoToUser(user));
+    }*/
+
+    public void updateUser(Long id, UpdateUserRecord record) throws DuplicateEmailException, DuplicateDocumentException, UserNotFoundException, EmailFormatException {
+
+        var user = repository.findById(id).orElseThrow(UserNotFoundException::new);
+
+        if (record.email() != null) {
+            checkDuplicateEmail(record.email(), id);
+            Validations.emailValidator(record.email());
+        }
+        if (record.document() != null) checkDuplicateDocument(record.document(), id);
+
+        //user.setEmail("test@mail.com");
+        user.update(record);
     }
 
     public void disableUser(Long id) throws UserNotFoundException {

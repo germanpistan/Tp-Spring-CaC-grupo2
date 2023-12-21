@@ -18,12 +18,12 @@ public class TransferController {
 
     private final TransferService service;
 
-    public TransferController(TransferService service){
+    public TransferController(TransferService service) {
         this.service = service;
     }
 
     @GetMapping
-    public ResponseEntity<List<TransferDto>> getTransfers(){
+    public ResponseEntity<List<TransferDto>> getTransfers() {
         List<TransferDto> transfers = service.getTransfers();
         return ResponseEntity.status(HttpStatus.OK).body(transfers);
     }

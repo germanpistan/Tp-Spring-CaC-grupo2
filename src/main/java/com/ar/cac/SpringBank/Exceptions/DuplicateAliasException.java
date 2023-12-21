@@ -1,8 +1,8 @@
 package com.ar.cac.SpringBank.Exceptions;
 
-public class DuplicateAliasException extends Exception{
+public class DuplicateAliasException extends Exception {
 
-    public DuplicateAliasException(){
+    public DuplicateAliasException() {
         super("El alias ya se encuentra registado");
     }
 }

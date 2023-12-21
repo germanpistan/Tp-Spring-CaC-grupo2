@@ -1,7 +1,10 @@
 package com.ar.cac.SpringBank.controllers;
 
 
-import com.ar.cac.SpringBank.Exceptions.*;
+import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
+import com.ar.cac.SpringBank.Exceptions.DuplicateAliasException;
+import com.ar.cac.SpringBank.Exceptions.DuplicateCbuException;
+import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.entities.dtos.AccountDto;
 import com.ar.cac.SpringBank.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) throws DuplicateAliasException,DuplicateCbuException,UserNotFoundException {
+    public ResponseEntity<?> createAccount(@RequestBody AccountDto account) throws DuplicateAliasException, DuplicateCbuException, UserNotFoundException {
 
         try {
 
@@ -64,11 +67,11 @@ public class AccountController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, UserNotFoundException,DuplicateCbuException, DuplicateAliasException {
+    public ResponseEntity<?> updateAccount(@PathVariable Long id, @RequestBody AccountDto account) throws AccountNotFoundException, UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
 
         try {
 
-            service.updateAccount (id, account);
+            service.updateAccount(id, account);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

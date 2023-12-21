@@ -4,11 +4,16 @@ package com.ar.cac.SpringBank.controllers;
 import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
 import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
 import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
-import com.ar.cac.SpringBank.entities.dtos.UserDto;
+import com.ar.cac.SpringBank.Exceptions.validations.EmailFormatException;
+import com.ar.cac.SpringBank.records.user.NewUserRecord;
+import com.ar.cac.SpringBank.records.user.UpdateUserRecord;
 import com.ar.cac.SpringBank.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +31,7 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers() {
+    public ResponseEntity<List<?>> getUsers() {
 
         // Refactor
         // List<UserDto> lista = service.getUsers();
@@ -36,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) throws UserNotFoundException{
+    public ResponseEntity<?> getUserById(@PathVariable Long id) throws UserNotFoundException {
 
         try {
 
@@ -52,7 +57,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserDto user) throws DuplicateEmailException,DuplicateDocumentException {
+    public ResponseEntity<?> createUser(@Valid @RequestBody NewUserRecord user, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            bindingResult
+                                    .getFieldErrors()
+                                    .stream()
+                                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                                    .toList()
+                    );
+        }
 
         try {
 
@@ -69,16 +86,16 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto user) throws DuplicateDocumentException,DuplicateEmailException,UserNotFoundException{
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateUserRecord record) throws DuplicateDocumentException, DuplicateEmailException, UserNotFoundException {
 
         try {
 
-            service.updateUser(id, user);
+            service.updateUser(id, record);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .build();
-        } catch (DuplicateEmailException | DuplicateDocumentException e) {
+        } catch (DuplicateEmailException | DuplicateDocumentException | EmailFormatException e) {
 
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -93,7 +110,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException{
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException {
 
 
         try {

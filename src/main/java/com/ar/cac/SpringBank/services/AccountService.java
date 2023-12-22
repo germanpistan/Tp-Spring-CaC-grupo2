@@ -1,8 +1,8 @@
 package com.ar.cac.SpringBank.services;
 
 
-import com.ar.cac.SpringBank.Exceptions.*;
 import com.ar.cac.SpringBank.entities.Account;
+import com.ar.cac.SpringBank.exceptions.*;
 import com.ar.cac.SpringBank.records.account.AccountRecord;
 import com.ar.cac.SpringBank.records.account.NewAccountRecord;
 import com.ar.cac.SpringBank.records.account.UpdateAccountRecord;
@@ -27,7 +27,6 @@ public class AccountService {
     public AccountService(AccountRepository repository) {
 
         this.repository = repository;
-
     }
 
     public List<AccountRecord> getAccounts() {
@@ -52,7 +51,7 @@ public class AccountService {
                 .orElseThrow(AccountNotFoundException::new);
     }
 
-    public AccountRecord getAccountById(String alias) throws AccountNotFoundException {
+    public AccountRecord getAccountByAlias(String alias) throws AccountNotFoundException {
 
         return repository.findByAlias(alias)
                 .map(AccountRecord::new)
@@ -87,6 +86,18 @@ public class AccountService {
         account.update(record);
 
         repository.save(account);
+    }
+
+    public Account updateAmount(Long id, BigDecimal amount) throws AccountNotFoundException, InsufficientFoundsException {
+
+        var account = repository.findById(id)
+                .orElseThrow(AccountNotFoundException::new);
+
+        if (amount.signum() < 0 && account.getAmount().compareTo(amount) < 0)
+            throw new InsufficientFoundsException();
+
+        account.updateAmount(amount);
+        return repository.save(account);
     }
 
     public void deleteAccount(Long id) throws AccountNotFoundException {
@@ -174,5 +185,12 @@ public class AccountService {
 
         return sb.toString()
                 .toUpperCase();
+    }
+
+    public void adjustment(Long id, BigDecimal amount) throws AccountNotFoundException {
+
+        var account = getAccountByIdBase(id);
+        account.updateAmount(amount);
+        repository.save(account);
     }
 }

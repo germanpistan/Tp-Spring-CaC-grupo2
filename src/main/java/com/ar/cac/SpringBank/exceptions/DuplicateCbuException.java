@@ -1,4 +1,4 @@
-package com.ar.cac.SpringBank.Exceptions;
+package com.ar.cac.SpringBank.exceptions;
 
 public class DuplicateCbuException extends Exception {
 

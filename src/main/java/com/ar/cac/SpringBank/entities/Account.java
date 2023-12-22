@@ -26,7 +26,7 @@ public class Account {
 
     @Column(name = "account_type")
     @Enumerated(EnumType.ORDINAL)
-    private AccountType type;
+    private AccountType type = AccountType.CAJA_AHORRO_PESOS;
 
     @Column(unique = true, precision = 22)
     private String cbu;
@@ -45,6 +45,7 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -53,7 +54,8 @@ public class Account {
             mappedBy = "account",
             cascade = CascadeType.ALL
     )
-    private List<Operation> movements = new ArrayList<>();
+    private List<Transfer> transfers = new ArrayList<>();
+
 
     public Account(User user, AccountType type, String cbu, String alias) {
 

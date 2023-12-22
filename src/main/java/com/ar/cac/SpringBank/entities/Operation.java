@@ -10,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity(name = "operations")
+//@Entity(name = "operations")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -32,11 +32,11 @@ public class Operation {
     private LocalDateTime createdAt;
 
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "target_account_id")
-    private Account targetAccount;
+    private Account targetAccount;*/
 }

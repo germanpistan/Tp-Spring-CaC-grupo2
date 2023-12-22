@@ -1,9 +1,9 @@
 package com.ar.cac.SpringBank.controllers;
 
 
-import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
-import com.ar.cac.SpringBank.Exceptions.DuplicateAliasException;
-import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
+import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
+import com.ar.cac.SpringBank.exceptions.DuplicateAliasException;
+import com.ar.cac.SpringBank.exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.records.account.NewAccountRecord;
 import com.ar.cac.SpringBank.records.account.UpdateAccountRecord;
 import com.ar.cac.SpringBank.services.AccountService;

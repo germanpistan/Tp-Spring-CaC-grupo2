@@ -1,10 +1,10 @@
 package com.ar.cac.SpringBank.controllers;
 
 
-import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
-import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
-import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
-import com.ar.cac.SpringBank.Exceptions.validations.EmailFormatException;
+import com.ar.cac.SpringBank.exceptions.DuplicateDocumentException;
+import com.ar.cac.SpringBank.exceptions.DuplicateEmailException;
+import com.ar.cac.SpringBank.exceptions.UserNotFoundException;
+import com.ar.cac.SpringBank.exceptions.validations.EmailFormatException;
 import com.ar.cac.SpringBank.records.user.NewUserRecord;
 import com.ar.cac.SpringBank.records.user.UpdateUserRecord;
 import com.ar.cac.SpringBank.services.UserService;
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) throws UserNotFoundException {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
 
         try {
 
@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateUserRecord record) throws DuplicateDocumentException, DuplicateEmailException, UserNotFoundException {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateUserRecord record) {
 
         try {
 
@@ -106,12 +106,10 @@ public class UserController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(e2.getMessage());
         }
-
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) throws UserNotFoundException {
-
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
         try {
 
@@ -126,5 +124,4 @@ public class UserController {
                     .body(e.getMessage());
         }
     }
-
 }

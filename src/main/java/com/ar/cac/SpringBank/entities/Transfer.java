@@ -19,6 +19,9 @@ public class Transfer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "target_cbu", nullable = false)
+    private String targetAccount;
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime date;
@@ -29,14 +32,11 @@ public class Transfer {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "target_account_id")
-    private Account targetAccount;
 
     public Transfer(Account account, Account targetAccount, BigDecimal amount) {
 
         this.account = account;
-        this.targetAccount = targetAccount;
+        this.targetAccount = targetAccount.getCbu();
         this.amount = amount;
     }
 }

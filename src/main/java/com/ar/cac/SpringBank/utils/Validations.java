@@ -1,6 +1,6 @@
 package com.ar.cac.SpringBank.utils;
 
-import com.ar.cac.SpringBank.Exceptions.validations.EmailFormatException;
+import com.ar.cac.SpringBank.exceptions.validations.EmailFormatException;
 
 public class Validations {
 

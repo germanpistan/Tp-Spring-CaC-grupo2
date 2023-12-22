@@ -62,7 +62,7 @@ public class User {
             mappedBy = "user",
             cascade = CascadeType.ALL
     )
-    private List<Account> accounts;
+    private List<Account> accounts = new ArrayList<>();
 
     public User(UserRecord record) {
 

@@ -1,4 +1,4 @@
-package com.ar.cac.SpringBank.Exceptions.validations;
+package com.ar.cac.SpringBank.exceptions.validations;
 
 public class EmailFormatException extends Exception {
 

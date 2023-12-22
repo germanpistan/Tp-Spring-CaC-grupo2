@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 
 public record NewTransferRecord(
         @NotNull(
-                message = "El id del usuario de origen no puede ser nulo."
+                message = "El id de la cuenta de origen no puede ser nulo."
         )
-        Long sourceAccountId,
+        Long accountId,
 
         @NotNull(
-                message = "El id del usuario de destino no puede ser nulo."
+                message = "El id de la cuenta de destino no puede ser nulo."
         )
         Long targetAccountId,
 

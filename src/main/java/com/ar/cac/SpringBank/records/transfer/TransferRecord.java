@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 public record TransferRecord(
         Long id,
-        Long sourceAccount,
-        Long targetAccount,
+        Long accountId,
+        String targetCBU,
         BigDecimal amount,
         LocalDateTime date
 ) {
@@ -18,7 +18,7 @@ public record TransferRecord(
         this(
                 transfer.getId(),
                 transfer.getAccount().getId(),
-                transfer.getTargetAccount().getId(),
+                transfer.getTargetAccount(),
                 transfer.getAmount(),
                 transfer.getDate()
         );

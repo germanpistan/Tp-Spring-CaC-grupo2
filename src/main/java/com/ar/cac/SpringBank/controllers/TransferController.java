@@ -1,9 +1,9 @@
 package com.ar.cac.SpringBank.controllers;
 
 
-import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
-import com.ar.cac.SpringBank.Exceptions.InsufficientFoundsException;
-import com.ar.cac.SpringBank.Exceptions.TransferNotFoundException;
+import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
+import com.ar.cac.SpringBank.exceptions.InsufficientFoundsException;
+import com.ar.cac.SpringBank.exceptions.TransferNotFoundException;
 import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
 import com.ar.cac.SpringBank.records.transfer.TransferRecord;
 import com.ar.cac.SpringBank.services.TransferService;

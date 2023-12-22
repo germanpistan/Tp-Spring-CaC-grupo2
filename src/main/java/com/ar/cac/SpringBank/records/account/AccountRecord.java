@@ -2,6 +2,8 @@ package com.ar.cac.SpringBank.records.account;
 
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.enums.AccountType;
+import com.ar.cac.SpringBank.records.transfer.TransferRecord;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -16,7 +18,7 @@ public record AccountRecord(
         String cbu,
         String alias,
         BigDecimal amount,
-        List<OperationRecord> movements
+        List<TransferRecord> transfers
 ) {
 
     public AccountRecord(Account account) {
@@ -28,9 +30,9 @@ public record AccountRecord(
                 account.getAlias(),
                 account.getAmount(),
                 new ArrayList<>(
-                        account.getMovements()
+                        account.getTransfers()
                                 .stream()
-                                .map(OperationRecord::new)
+                                .map(TransferRecord::new)
                                 .toList()
                 )
         );

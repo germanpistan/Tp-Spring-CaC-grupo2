@@ -1,9 +1,9 @@
 package com.ar.cac.SpringBank.services;
 
-import com.ar.cac.SpringBank.Exceptions.DuplicateDocumentException;
-import com.ar.cac.SpringBank.Exceptions.DuplicateEmailException;
-import com.ar.cac.SpringBank.Exceptions.UserNotFoundException;
-import com.ar.cac.SpringBank.Exceptions.validations.EmailFormatException;
+import com.ar.cac.SpringBank.exceptions.DuplicateDocumentException;
+import com.ar.cac.SpringBank.exceptions.DuplicateEmailException;
+import com.ar.cac.SpringBank.exceptions.UserNotFoundException;
+import com.ar.cac.SpringBank.exceptions.validations.EmailFormatException;
 import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.records.user.NewUserRecord;
 import com.ar.cac.SpringBank.records.user.UpdateUserRecord;

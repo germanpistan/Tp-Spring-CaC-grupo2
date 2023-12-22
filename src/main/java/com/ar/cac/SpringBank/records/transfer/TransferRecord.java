@@ -17,8 +17,8 @@ public record TransferRecord(
 
         this(
                 transfer.getId(),
-                transfer.getSourceAccountId(),
-                transfer.getTargetAccountId(),
+                transfer.getAccount().getId(),
+                transfer.getTargetAccount().getId(),
                 transfer.getAmount(),
                 transfer.getDate()
         );

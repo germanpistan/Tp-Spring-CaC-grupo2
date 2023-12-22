@@ -3,15 +3,17 @@ package com.ar.cac.SpringBank.services;
 
 import com.ar.cac.SpringBank.Exceptions.*;
 import com.ar.cac.SpringBank.entities.Account;
-import com.ar.cac.SpringBank.entities.User;
-import com.ar.cac.SpringBank.entities.dtos.AccountDto;
-import com.ar.cac.SpringBank.mappers.AccountMapper;
+import com.ar.cac.SpringBank.records.account.AccountRecord;
+import com.ar.cac.SpringBank.records.account.NewAccountRecord;
+import com.ar.cac.SpringBank.records.account.UpdateAccountRecord;
 import com.ar.cac.SpringBank.repositories.AccountRepository;
+import com.ar.cac.SpringBank.utils.WordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class AccountService {
@@ -28,63 +30,64 @@ public class AccountService {
 
     }
 
-    public List<AccountDto> getAccounts() {
+    public List<AccountRecord> getAccounts() {
 
         return repository.findAll().stream()
-                .map(AccountMapper::accountToDto)
+                .map(AccountRecord::new)
                 .toList();
     }
 
-    public AccountDto getAccountById(Long id) throws AccountNotFoundException {
+    protected Account getAccountByIdBase(Long id) throws AccountNotFoundException {
 
 
         return repository.findById(id)
-                .map(AccountMapper::accountToDto)
                 .orElseThrow(AccountNotFoundException::new);
     }
 
-    public AccountDto createAccount(AccountDto dto) throws UserNotFoundException, DuplicateCbuException, DuplicateAliasException {
+    public AccountRecord getAccountById(Long id) throws AccountNotFoundException {
 
 
-        checkExistsCbu(dto.getCbu());
-        checkExistsAlias(dto.getAlias());
-        var user = userService.getUserById(dto.getUserId());
-
-
-        Account accountSaved = repository.save(AccountMapper.dtoToAccount(dto, new User(user)));
-        return AccountMapper.accountToDto(accountSaved);
+        return repository.findById(id)
+                .map(AccountRecord::new)
+                .orElseThrow(AccountNotFoundException::new);
     }
 
-    public void updateAccount(Long id, AccountDto dto) throws DuplicateAliasException, DuplicateCbuException, AccountNotFoundException, UserNotFoundException {
+    public AccountRecord getAccountById(String alias) throws AccountNotFoundException {
 
-
-        var acc = getAccountById(id);
-        var user = userService.getUserById(id);
-
-        if (dto.getAlias() != null) {
-
-            checkDuplicateAlias(dto.getId(), dto.getAlias());
-            acc.setAlias(dto.getAlias());
-
-        }
-
-        if (dto.getAmount() != null) {
-            acc.setAmount(dto.getAmount());
-        }
-
-        if (dto.getType() != null) {
-            acc.setType(dto.getType());
-        }
-
-        if (dto.getCbu() != null) {
-            checkDuplicateCbu(dto.getId(), dto.getCbu());
-            acc.setCbu(dto.getCbu());
-        }
-
-        Account accountModified = repository.save(AccountMapper.dtoToAccount(acc, new User(user)));
-
+        return repository.findByAlias(alias)
+                .map(AccountRecord::new)
+                .orElseThrow(AccountNotFoundException::new);
     }
 
+    public AccountRecord createAccount(NewAccountRecord record) throws UserNotFoundException {
+
+        var user = userService.getUserByIdBase(record.userId());
+        String cbu = generatedCBU();
+        String alias = generatedAlias();
+
+        while (repository.existsByCbu(cbu))
+            cbu = generatedCBU();
+
+        while (repository.existsByAlias(alias))
+            alias = generatedAlias();
+
+        Account account = new Account(user, record.type(), cbu, alias);
+
+        return new AccountRecord(
+                repository.save(account)
+        );
+    }
+
+    public void updateAlias(Long id, UpdateAccountRecord record) throws DuplicateAliasException, AccountNotFoundException {
+
+
+        var account = getAccountByIdBase(id);
+        checkDuplicateAlias(id, record.alias());
+
+        account.update(record);
+
+        repository.save(account);
+    }
 
     public void deleteAccount(Long id) throws AccountNotFoundException {
 
@@ -124,5 +127,52 @@ public class AccountService {
         var result = repository.existsByAliasAndIdNot(alias, id);
         if (result) throw new DuplicateAliasException();
 
+    }
+
+    /**
+     * Genera un CBU único para la cuenta
+     *
+     * @return
+     */
+    private String generatedCBU() {
+
+        /*
+        La CBU está compuesta por 22 dígitos, separados en dos bloques.
+        El primer bloque tiene un número de entidad de 3 dígitos, un número de sucursal de 4 dígitos y un dígito
+        verificador, en este caso usamos el 3. El segundo bloque tiene un número de 13 dígitos que identifica la
+        cuenta dentro de la entidad y la sucursal, más un dígito verificador, en este caso usamos el 9.
+         */
+
+        final String ENTITY = "999";
+        final String BANK_BRANCH = "0001";
+        final String CHECKER_ONE = "3";
+        final String CHECKER_TWO = "9";
+
+        long randomNumber = Math.abs(new Random().nextLong() % 1_000_000_000L);
+        String accountNumber = String.format("%013d", randomNumber);
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(ENTITY)
+                .append(BANK_BRANCH)
+                .append(CHECKER_ONE)
+                .append(accountNumber)
+                .append(CHECKER_TWO);
+
+        return sb.toString();
+    }
+
+    private String generatedAlias() {
+        WordGenerator wg = new WordGenerator();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(wg.getRandomWord())
+                .append(".")
+                .append(wg.getRandomWord())
+                .append(".")
+                .append(wg.getRandomWord());
+
+        return sb.toString()
+                .toUpperCase();
     }
 }

@@ -7,19 +7,18 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class User {
 
     @Id
@@ -55,11 +54,15 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Account> accounts;
-
     @Column(name = "is_enabled", nullable = false)
     boolean isEnabled = true;
+
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    private List<Account> accounts;
 
     public User(UserRecord record) {
 
@@ -69,7 +72,6 @@ public class User {
         this.email = record.email();
         this.password = record.password();
         this.document = record.document();
-        ;
         this.birthDate = record.birthDate();
         this.address = record.address();
     }
@@ -95,5 +97,11 @@ public class User {
         if (record.document() != null) this.document = record.document();
         if (record.birthDate() != null) this.birthDate = record.birthDate();
         if (record.address() != null) this.address = record.address();
+    }
+
+    public void disabled() {
+
+        // En los bancos no se restablecen los usuarios?.
+        this.isEnabled = !this.isEnabled;
     }
 }

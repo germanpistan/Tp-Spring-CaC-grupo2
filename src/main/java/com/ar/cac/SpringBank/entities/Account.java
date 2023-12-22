@@ -1,22 +1,25 @@
 package com.ar.cac.SpringBank.entities;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
+import com.ar.cac.SpringBank.records.account.UpdateAccountRecord;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "accounts")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
-@Builder
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,13 +28,13 @@ public class Account {
     @Enumerated(EnumType.ORDINAL)
     private AccountType type;
 
-    @Column(name = "cbu", unique = true)
+    @Column(unique = true, precision = 22)
     private String cbu;
 
-    @Column(name = "alias", unique = true)
+    @Column(unique = true)
     private String alias;
 
-    @Column(name = "amount")
+    @Column
     private BigDecimal amount = BigDecimal.ZERO;
 
     @Column(name = "created_at", updatable = false)
@@ -46,6 +49,27 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany
-    private List<Transfer> transfer;
+    @OneToMany(
+            mappedBy = "account",
+            cascade = CascadeType.ALL
+    )
+    private List<Operation> movements = new ArrayList<>();
+
+    public Account(User user, AccountType type, String cbu, String alias) {
+
+        this.user = user;
+        if (type != null) this.type = type;
+        this.cbu = cbu;
+        this.alias = alias;
+    }
+
+    public void update(UpdateAccountRecord record) {
+
+        if (record.alias() != null) this.alias = record.alias();
+    }
+
+    public void updateAmount(BigDecimal amount) {
+
+        this.amount = this.amount.add(amount);
+    }
 }

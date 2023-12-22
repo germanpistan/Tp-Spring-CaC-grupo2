@@ -4,7 +4,8 @@ package com.ar.cac.SpringBank.controllers;
 import com.ar.cac.SpringBank.Exceptions.AccountNotFoundException;
 import com.ar.cac.SpringBank.Exceptions.InsufficientFoundsException;
 import com.ar.cac.SpringBank.Exceptions.TransferNotFoundException;
-import com.ar.cac.SpringBank.entities.dtos.TransferDto;
+import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
+import com.ar.cac.SpringBank.records.transfer.TransferRecord;
 import com.ar.cac.SpringBank.services.TransferService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +24,47 @@ public class TransferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransferDto>> getTransfers() {
-        List<TransferDto> transfers = service.getTransfers();
-        return ResponseEntity.status(HttpStatus.OK).body(transfers);
+    public ResponseEntity<List<TransferRecord>> getTransfers() {
+
+        return ResponseEntity
+                .ok(service.getTransfers());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TransferDto> getTransferById(@PathVariable Long id) throws TransferNotFoundException {
-        TransferDto transfer = service.getTransferById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(transfer);
+    public ResponseEntity<?> getTransferById(@PathVariable Long id) {
+
+
+        try {
+
+            return ResponseEntity
+                    .ok(service.getTransferById(id));
+        } catch (TransferNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
     @PostMapping
-    public ResponseEntity<TransferDto> performTransfer(@RequestBody TransferDto dto) throws InsufficientFoundsException, AccountNotFoundException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.performTransfer(dto));
+    public ResponseEntity<?> performTransfer(@RequestBody NewTransferRecord record) {
+
+        try {
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(service.performTransfer(record));
+        } catch (AccountNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (InsufficientFoundsException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
 }

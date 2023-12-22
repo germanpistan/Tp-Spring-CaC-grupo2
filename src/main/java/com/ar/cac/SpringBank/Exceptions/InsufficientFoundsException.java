@@ -6,6 +6,6 @@ public class InsufficientFoundsException extends Exception {
     }
 
     public InsufficientFoundsException() {
-        super("Fondos insuficientes");
+        super("Fondos insuficientes.");
     }
 }

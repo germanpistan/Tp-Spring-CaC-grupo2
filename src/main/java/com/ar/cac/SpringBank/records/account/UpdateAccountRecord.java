@@ -1,13 +1,12 @@
 package com.ar.cac.SpringBank.records.account;
 
-import com.ar.cac.SpringBank.entities.enums.AccountType;
-
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotEmpty;
 
 public record UpdateAccountRecord(
-        AccountType type,
-        String cbu,
-        String alias,
-        BigDecimal amount
+
+        @NotEmpty(
+                message = "El alias no puede ser nulo o estar vacio."
+        )
+        String alias
 ) {
 }

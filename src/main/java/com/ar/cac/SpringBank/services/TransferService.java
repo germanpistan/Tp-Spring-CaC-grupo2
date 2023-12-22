@@ -5,8 +5,8 @@ import com.ar.cac.SpringBank.Exceptions.InsufficientFoundsException;
 import com.ar.cac.SpringBank.Exceptions.TransferNotFoundException;
 import com.ar.cac.SpringBank.entities.Account;
 import com.ar.cac.SpringBank.entities.Transfer;
-import com.ar.cac.SpringBank.entities.dtos.TransferDto;
-import com.ar.cac.SpringBank.mappers.TransferMapper;
+import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
+import com.ar.cac.SpringBank.records.transfer.TransferRecord;
 import com.ar.cac.SpringBank.repositories.AccountRepository;
 import com.ar.cac.SpringBank.repositories.TransferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,61 +28,61 @@ public class TransferService {
     private AccountRepository accountRepository;
 
 
-    public List<TransferDto> getTransfers() {
+    public List<TransferRecord> getTransfers() {
 
 
-        return repository.findAll().stream().map(TransferMapper::transferToDto).toList();
+        return repository.findAll().stream().map(TransferRecord::new).toList();
     }
 
-    public TransferDto getTransferById(Long id) throws TransferNotFoundException {
+    public Transfer getTransferByIdBase(Long id) throws TransferNotFoundException {
 
 
-        return repository.findById(id).map(TransferMapper::transferToDto).orElseThrow(TransferNotFoundException::new);
+        return repository.findById(id)
+                .orElseThrow(TransferNotFoundException::new);
     }
 
+    public TransferRecord getTransferById(Long id) throws TransferNotFoundException {
 
-    public TransferDto createTransfer(TransferDto dto) throws AccountNotFoundException, InsufficientFoundsException {
 
+        return repository.findById(id)
+                .map(TransferRecord::new)
+                .orElseThrow(TransferNotFoundException::new);
+    }
 
-        accountService.checkExistAccount(dto.getSourceAccountId());
-        accountService.checkAmount(dto.getSourceAccountId(), dto.getAmount());
-        accountService.checkExistAccount(dto.getTargetAccountId());
+    public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFoundsException {
 
-        var entity = repository.save(TransferMapper.dtoToTransfer(dto));
+        var sourceAccount = accountService.getAccountByIdBase(record.sourceAccountId());
+        var targetAccount = accountService.getAccountByIdBase(record.sourceAccountId());
+        accountService.checkAmount(record.sourceAccountId(), record.amount());
 
-        return TransferMapper.transferToDto(entity);
+        var entity = repository.save(
+                new Transfer(sourceAccount, targetAccount, record.amount())
+        );
+
+        return new TransferRecord(entity);
     }
 
     @Transactional
-    public TransferDto performTransfer(TransferDto dto) throws AccountNotFoundException, InsufficientFoundsException {
+    public TransferRecord performTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFoundsException {
 
-        Account originAccount = accountRepository.findById(dto.getSourceAccountId())
-                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getSourceAccountId()));
-        Account destinationAccount = accountRepository.findById(dto.getTargetAccountId())
-                .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + dto.getTargetAccountId()));
+        Account sourceAcc = accountService.getAccountByIdBase(record.sourceAccountId());
+        Account targetAcc = accountService.getAccountByIdBase(record.targetAccountId());
 
+        if (sourceAcc.getAmount().compareTo(record.amount()) < 0)
+            throw new InsufficientFoundsException();
 
-        if (originAccount.getAmount().compareTo(dto.getAmount()) < 0) {
-            throw new InsufficientFoundsException("Insufficient funds in the account with id: " + dto.getSourceAccountId());
-        }
+        sourceAcc.updateAmount(record.amount().negate());
+        targetAcc.updateAmount(record.amount());
 
+        accountRepository.save(sourceAcc);
+        accountRepository.save(targetAcc);
 
-        originAccount.setAmount(originAccount.getAmount().subtract(dto.getAmount()));
-        destinationAccount.setAmount(destinationAccount.getAmount().add(dto.getAmount()));
-
-
-        accountRepository.save(originAccount);
-        accountRepository.save(destinationAccount);
-
-
-        Transfer transfer = new Transfer();
-
-        transfer.setSourceAccountId(originAccount.getId());
-        transfer.setTargetAccountId(destinationAccount.getId());
-        transfer.setAmount(dto.getAmount());
-        transfer = repository.save(transfer);
-
-
-        return TransferMapper.transferToDto(transfer);
+        return new TransferRecord(
+                repository.save(new Transfer(
+                        sourceAcc,
+                        targetAcc,
+                        record.amount()
+                ))
+        );
     }
 }

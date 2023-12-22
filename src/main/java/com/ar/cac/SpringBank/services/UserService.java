@@ -54,6 +54,12 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    protected User getUserByIdBase(Long id) throws UserNotFoundException {
+
+        return repository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     /*public UserDto createUser(UserDto userDto) throws DuplicateEmailException, DuplicateDocumentException {
 
         checkExistEmail(userDto.getEmail());
@@ -122,8 +128,8 @@ public class UserService {
 
     public void disableUser(Long id) throws UserNotFoundException {
 
-        var user = repository.findById(id).orElseThrow(UserNotFoundException::new);
-        user.setEnabled(!user.isEnabled());
+        var user = getUserByIdBase(id);
+        user.disabled();
 
         repository.save(user);
     }

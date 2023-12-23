@@ -163,28 +163,25 @@ public class AccountService {
         long randomNumber = Math.abs(new Random().nextLong() % 1_000_000_000L);
         String accountNumber = String.format("%013d", randomNumber);
 
-        StringBuilder sb = new StringBuilder();
+        String sb = ENTITY +
+                BANK_BRANCH +
+                CHECKER_ONE +
+                accountNumber +
+                CHECKER_TWO;
 
-        sb.append(ENTITY)
-                .append(BANK_BRANCH)
-                .append(CHECKER_ONE)
-                .append(accountNumber)
-                .append(CHECKER_TWO);
-
-        return sb.toString();
+        return sb;
     }
 
     private String generatedAlias() {
         WordGenerator wg = new WordGenerator();
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(wg.getRandomWord())
-                .append(".")
-                .append(wg.getRandomWord())
-                .append(".")
-                .append(wg.getRandomWord());
+        String sb = wg.getRandomWord() +
+                "." +
+                wg.getRandomWord() +
+                "." +
+                wg.getRandomWord();
 
-        return sb.toString()
+        return sb
                 .toUpperCase();
     }
 

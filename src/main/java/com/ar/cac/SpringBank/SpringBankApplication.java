@@ -21,8 +21,10 @@ public class SpringBankApplication implements CommandLineRunner {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private AccountService accountService;
+
     @Autowired
     private TransferService transferService;
 

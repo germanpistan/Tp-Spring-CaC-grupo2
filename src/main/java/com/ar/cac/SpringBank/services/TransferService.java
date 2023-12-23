@@ -1,6 +1,7 @@
 package com.ar.cac.SpringBank.services;
 
 import com.ar.cac.SpringBank.entities.Transfer;
+import com.ar.cac.SpringBank.entities.enums.AccountType;
 import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
 import com.ar.cac.SpringBank.exceptions.IncompatibleAccountTypeException;
 import com.ar.cac.SpringBank.exceptions.InsufficientFundsException;
@@ -44,35 +45,8 @@ public class TransferService {
                 .orElseThrow(TransferNotFoundException::new);
     }
 
-    /*public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFundsException {
-
-        var sourceAccount = accountService.getAccountByIdBase(record.accountId());
-        var targetAccount = accountService.getAccountByIdBase(record.targetAccountId());
-
-        //if (sourceAccount.getAmount().compareTo(record.amount().abs() < 0)) throw new InsufficientFundsException();
-        accountService.checkAmount(record.accountId(), record.amount());
-
-        var entity = repository.save(
-                new Transfer(sourceAccount, targetAccount, record.amount())
-        );
-
-        return new TransferRecord(entity);
-    }*/
-
     @Transactional
     public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFundsException, IncompatibleAccountTypeException {
-
-        //Account sourceAcc = accountService.getAccountByIdBase(record.sourceAccountId());
-        //Account targetAcc = accountService.getAccountByIdBase(record.targetAccountId());
-
-        //if (sourceAcc.getAmount().compareTo(record.amount()) < 0)
-        //    throw new InsufficientFoundsException();
-
-        //sourceAcc.updateAmount(record.amount().negate());
-        //targetAcc.updateAmount(record.amount());
-
-        //accountRepository.save(sourceAcc);
-        //accountRepository.save(targetAcc);
 
         accountService.compareAccountType(record.accountId(), record.targetAccountId());
 
@@ -86,5 +60,18 @@ public class TransferService {
                         record.amount()
                 ))
         );
+    }
+
+    @Transactional
+    public void deleteTransfer(Long id) throws TransferNotFoundException, AccountNotFoundException, IncompatibleAccountTypeException, InsufficientFundsException {
+
+        var transfer = getTransferById(id);
+        var account = accountService.getAccountById(transfer.accountId());
+
+        if (account.type().equals(AccountType.CAJA_AHORRO_DOLAR)) {
+            createTransfer(new NewTransferRecord(1L, id, transfer.amount()));
+        } else {
+            createTransfer(new NewTransferRecord(3L, id, transfer.amount()));
+        }
     }
 }

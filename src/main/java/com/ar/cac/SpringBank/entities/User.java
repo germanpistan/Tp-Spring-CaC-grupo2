@@ -83,7 +83,6 @@ public class User {
         this.email = record.email();
         this.password = record.password();
         this.document = record.document();
-        ;
         this.birthDate = record.birthDate();
         this.address = record.address();
     }

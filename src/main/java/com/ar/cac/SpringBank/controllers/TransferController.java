@@ -68,4 +68,26 @@ public class TransferController {
         }
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteTransfer(@PathVariable Long id) {
+
+
+        try {
+
+            service.deleteTransfer(id);
+
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        } catch (TransferNotFoundException | AccountNotFoundException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (IncompatibleAccountTypeException | InsufficientFundsException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
 }

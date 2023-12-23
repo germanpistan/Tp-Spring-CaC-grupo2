@@ -2,7 +2,8 @@ package com.ar.cac.SpringBank.services;
 
 import com.ar.cac.SpringBank.entities.Transfer;
 import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
-import com.ar.cac.SpringBank.exceptions.InsufficientFoundsException;
+import com.ar.cac.SpringBank.exceptions.IncompatibleAccountTypeException;
+import com.ar.cac.SpringBank.exceptions.InsufficientFundsException;
 import com.ar.cac.SpringBank.exceptions.TransferNotFoundException;
 import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
 import com.ar.cac.SpringBank.records.transfer.TransferRecord;
@@ -43,10 +44,12 @@ public class TransferService {
                 .orElseThrow(TransferNotFoundException::new);
     }
 
-    public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFoundsException {
+    /*public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFundsException {
 
         var sourceAccount = accountService.getAccountByIdBase(record.accountId());
         var targetAccount = accountService.getAccountByIdBase(record.targetAccountId());
+
+        //if (sourceAccount.getAmount().compareTo(record.amount().abs() < 0)) throw new InsufficientFundsException();
         accountService.checkAmount(record.accountId(), record.amount());
 
         var entity = repository.save(
@@ -54,10 +57,10 @@ public class TransferService {
         );
 
         return new TransferRecord(entity);
-    }
+    }*/
 
     @Transactional
-    public TransferRecord performTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFoundsException {
+    public TransferRecord createTransfer(NewTransferRecord record) throws AccountNotFoundException, InsufficientFundsException, IncompatibleAccountTypeException {
 
         //Account sourceAcc = accountService.getAccountByIdBase(record.sourceAccountId());
         //Account targetAcc = accountService.getAccountByIdBase(record.targetAccountId());
@@ -70,6 +73,8 @@ public class TransferService {
 
         //accountRepository.save(sourceAcc);
         //accountRepository.save(targetAcc);
+
+        accountService.compareAccountType(record.accountId(), record.targetAccountId());
 
         var sourceAccount = accountService.updateAmount(record.accountId(), record.amount().negate());
         var targetAccount = accountService.updateAmount(record.targetAccountId(), record.amount());

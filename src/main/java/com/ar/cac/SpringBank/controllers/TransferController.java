@@ -2,7 +2,8 @@ package com.ar.cac.SpringBank.controllers;
 
 
 import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
-import com.ar.cac.SpringBank.exceptions.InsufficientFoundsException;
+import com.ar.cac.SpringBank.exceptions.IncompatibleAccountTypeException;
+import com.ar.cac.SpringBank.exceptions.InsufficientFundsException;
 import com.ar.cac.SpringBank.exceptions.TransferNotFoundException;
 import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
 import com.ar.cac.SpringBank.records.transfer.TransferRecord;
@@ -53,13 +54,13 @@ public class TransferController {
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(service.performTransfer(record));
+                    .body(service.createTransfer(record));
         } catch (AccountNotFoundException e) {
 
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
-        } catch (InsufficientFoundsException e) {
+        } catch (InsufficientFundsException | IncompatibleAccountTypeException e) {
 
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

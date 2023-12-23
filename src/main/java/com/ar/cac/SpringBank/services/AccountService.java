@@ -2,6 +2,7 @@ package com.ar.cac.SpringBank.services;
 
 
 import com.ar.cac.SpringBank.entities.Account;
+import com.ar.cac.SpringBank.entities.enums.AccountType;
 import com.ar.cac.SpringBank.exceptions.*;
 import com.ar.cac.SpringBank.records.account.AccountRecord;
 import com.ar.cac.SpringBank.records.account.NewAccountRecord;
@@ -10,6 +11,7 @@ import com.ar.cac.SpringBank.repositories.AccountRepository;
 import com.ar.cac.SpringBank.utils.WordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -88,13 +90,12 @@ public class AccountService {
         repository.save(account);
     }
 
-    public Account updateAmount(Long id, BigDecimal amount) throws AccountNotFoundException, InsufficientFoundsException {
+    public Account updateAmount(Long id, BigDecimal amount) throws AccountNotFoundException, InsufficientFundsException {
 
-        var account = repository.findById(id)
-                .orElseThrow(AccountNotFoundException::new);
+        var account = getAccountByIdBase(id);
 
-        if (amount.signum() < 0 && account.getAmount().compareTo(amount) < 0)
-            throw new InsufficientFoundsException();
+        if (amount.signum() < 0 && account.getAmount().compareTo(amount.abs()) < 0)
+            throw new InsufficientFundsException();
 
         account.updateAmount(amount);
         return repository.save(account);
@@ -113,10 +114,10 @@ public class AccountService {
         if (!result) throw new AccountNotFoundException();
     }
 
-    protected void checkAmount(Long id, BigDecimal amount) throws InsufficientFoundsException {
+    protected void checkAmount(Long id, BigDecimal amount) throws InsufficientFundsException {
 
         var result = repository.existsByIdAndAmountGreaterThanEqual(id, amount);
-        if (result) throw new InsufficientFoundsException();
+        if (result) throw new InsufficientFundsException();
     }
 
     protected void checkExistsCbu(String cbu) throws DuplicateCbuException {
@@ -187,10 +188,40 @@ public class AccountService {
                 .toUpperCase();
     }
 
-    public void adjustment(Long id, BigDecimal amount) throws AccountNotFoundException {
+    @Transactional
+    public void initBank() throws AccountNotFoundException, UserNotFoundException, DuplicateAliasException {
 
-        var account = getAccountByIdBase(id);
-        account.updateAmount(amount);
-        repository.save(account);
+        createAccount(new NewAccountRecord(1L, AccountType.CAJA_AHORRO_PESOS));
+        updateAlias(1L, new UpdateAccountRecord("SPRINGBANK.ARS"));
+        createAccount(new NewAccountRecord(1L, AccountType.CUENTA_CORRIENTE));
+        updateAlias(2L, new UpdateAccountRecord("SPRINGBANK.CC"));
+        createAccount(new NewAccountRecord(1L, AccountType.CAJA_AHORRO_DOLAR));
+        updateAlias(3L, new UpdateAccountRecord("SPRINGBANK.USD"));
+
+        var accountARS = getAccountByIdBase(1L);
+        accountARS.updateAmount(BigDecimal.valueOf(999999999));
+        repository.save(accountARS);
+
+        var accountCC = getAccountByIdBase(2L);
+        accountCC.updateAmount(BigDecimal.valueOf(999999999));
+        repository.save(accountCC);
+
+        var accountUSD = getAccountByIdBase(3L);
+        accountUSD.updateAmount(BigDecimal.valueOf(999999999));
+        repository.save(accountUSD);
+    }
+
+    protected void compareAccountType(Long sourceAccountId, Long targetAccountId) throws IncompatibleAccountTypeException, AccountNotFoundException {
+
+        var acc1 = getAccountById(sourceAccountId).type();
+        var acc2 = getAccountById(targetAccountId).type();
+
+        if ((acc1 == AccountType.CAJA_AHORRO_PESOS || acc1 == AccountType.CUENTA_CORRIENTE)
+                && acc2 == AccountType.CAJA_AHORRO_DOLAR)
+            throw new IncompatibleAccountTypeException();
+
+        if (acc1 == AccountType.CAJA_AHORRO_DOLAR &&
+                (acc2 == AccountType.CAJA_AHORRO_PESOS || acc2 == AccountType.CUENTA_CORRIENTE))
+            throw new IncompatibleAccountTypeException();
     }
 }

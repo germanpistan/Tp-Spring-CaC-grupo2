@@ -1,10 +1,11 @@
 package com.ar.cac.SpringBank.services;
 
+import com.ar.cac.SpringBank.entities.Account;
+import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.exceptions.DuplicateDocumentException;
 import com.ar.cac.SpringBank.exceptions.DuplicateEmailException;
 import com.ar.cac.SpringBank.exceptions.UserNotFoundException;
 import com.ar.cac.SpringBank.exceptions.validations.EmailFormatException;
-import com.ar.cac.SpringBank.entities.User;
 import com.ar.cac.SpringBank.records.user.NewUserRecord;
 import com.ar.cac.SpringBank.records.user.UpdateUserRecord;
 import com.ar.cac.SpringBank.records.user.UserRecord;
@@ -12,6 +13,8 @@ import com.ar.cac.SpringBank.repositories.UserRepository;
 import com.ar.cac.SpringBank.utils.Validations;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -163,5 +166,25 @@ public class UserService {
 
         var result = repository.existsByDocumentAndIdNot(document, id);
         if (result) throw new DuplicateDocumentException();
+    }
+
+    public void initBank() {
+
+        var user = new User(
+                null,
+                "SA",
+                "SPRING BANK",
+                "INFO@SPRINGBANK.COM",
+                "BE9d&&Didpc5",
+                "99999999",
+                LocalDate.parse("2023-12-01"),
+                "AV. CONSTITUCION 1950",
+                null,
+                null,
+                false,
+                new ArrayList<Account>()
+        );
+
+        repository.save(user);
     }
 }

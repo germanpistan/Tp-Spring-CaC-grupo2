@@ -1,11 +1,9 @@
 package com.ar.cac.SpringBank;
 
 import com.ar.cac.SpringBank.entities.enums.AccountType;
-import com.ar.cac.SpringBank.exceptions.AccountNotFoundException;
-import com.ar.cac.SpringBank.exceptions.DuplicateDocumentException;
-import com.ar.cac.SpringBank.exceptions.DuplicateEmailException;
-import com.ar.cac.SpringBank.exceptions.UserNotFoundException;
+import com.ar.cac.SpringBank.exceptions.*;
 import com.ar.cac.SpringBank.records.account.NewAccountRecord;
+import com.ar.cac.SpringBank.records.transfer.NewTransferRecord;
 import com.ar.cac.SpringBank.records.user.NewUserRecord;
 import com.ar.cac.SpringBank.services.AccountService;
 import com.ar.cac.SpringBank.services.TransferService;
@@ -39,27 +37,39 @@ public class SpringBankApplication implements CommandLineRunner {
 
             seedUsers();
             seedAccounts();
+            seedTransfers();
         } catch (Exception e) {
 
             System.err.println(e.getMessage());
         }
     }
 
-    private void adjustment() throws AccountNotFoundException {
-        accountService.adjustment(1L, BigDecimal.valueOf(5000));
-        accountService.adjustment(2L, BigDecimal.valueOf(5000));
-        accountService.adjustment(3L, BigDecimal.valueOf(5000));
-        accountService.adjustment(4L, BigDecimal.valueOf(5000));
-        accountService.adjustment(5L, BigDecimal.valueOf(5000));
-        accountService.adjustment(6L, BigDecimal.valueOf(5000));
+    private void seedTransfers() throws AccountNotFoundException, InsufficientFundsException, IncompatibleAccountTypeException {
+
+        transferService.createTransfer(
+                new NewTransferRecord(1L, 4L, BigDecimal.valueOf(10000))
+        );
+        transferService.createTransfer(
+                new NewTransferRecord(3L, 5L, BigDecimal.valueOf(25))
+        );
+        transferService.createTransfer(
+                new NewTransferRecord(1L, 6L, BigDecimal.valueOf(10000))
+        );
+        transferService.createTransfer(
+                new NewTransferRecord(3L, 7L, BigDecimal.valueOf(25))
+        );
+        transferService.createTransfer(
+                new NewTransferRecord(1L, 8L, BigDecimal.valueOf(10000))
+        );
+        transferService.createTransfer(
+                new NewTransferRecord(3L, 9L, BigDecimal.valueOf(25))
+        );
     }
 
-    private void seedAccounts() throws UserNotFoundException, AccountNotFoundException {
+    private void seedAccounts() throws UserNotFoundException, AccountNotFoundException, DuplicateAliasException {
 
-        accountService.createAccount(
-                new NewAccountRecord(1L, AccountType.CAJA_AHORRO_PESOS));
-        accountService.createAccount(
-                new NewAccountRecord(1L, AccountType.CAJA_AHORRO_DOLAR));
+        accountService.initBank();
+
         accountService.createAccount(
                 new NewAccountRecord(2L, AccountType.CAJA_AHORRO_PESOS));
         accountService.createAccount(
@@ -68,12 +78,16 @@ public class SpringBankApplication implements CommandLineRunner {
                 new NewAccountRecord(3L, AccountType.CAJA_AHORRO_PESOS));
         accountService.createAccount(
                 new NewAccountRecord(3L, AccountType.CAJA_AHORRO_DOLAR));
-
-
-        adjustment();
+        accountService.createAccount(
+                new NewAccountRecord(4L, AccountType.CAJA_AHORRO_PESOS));
+        accountService.createAccount(
+                new NewAccountRecord(4L, AccountType.CAJA_AHORRO_DOLAR));
     }
 
     private void seedUsers() throws DuplicateEmailException, DuplicateDocumentException {
+
+        userService.initBank();
+
         userService.createUser(
                 new NewUserRecord(
                         "bazan",
